@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A'lo Ta'lim — Premium Test Platformasi</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            premiumDark: '#070A13',
+            premiumCard: '#0F1524',
+            premiumBorder: '#1F293D',
+            accentBlue: '#2563EB',
+            accentCyan: '#06B6D4',
+            accentEmerald: '#10B981',
+            accentRose: '#F43F5E',
+            accentAmber: '#F59E0B',
+            accentViolet: '#8B5CF6'
+          },
+          boxShadow: {
+            glowBlue: '0 0 20px rgba(37, 99, 235, 0.22)',
+            neonBlur: '0 0 30px rgba(6, 182, 212, 0.18)',
+            softCard: '0 20px 60px rgba(15, 21, 36, 0.14)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-0: #f4f7fb;
+      --bg-1: #edf3ff;
+      --surface: rgba(255,255,255,.74);
+      --surface-solid: #ffffff;
+      --surface-2: #f7f9ff;
+      --border: rgba(148,163,184,.25);
+      --text: #0f172a;
+      --text-soft: #64748b;
+      --shadow: 0 18px 60px rgba(15, 23, 42, .08);
+      --ring: rgba(37,99,235,.18);
+    }
+
+    html.dark {
+      --bg-0: #050814;
+      --bg-1: #0a1120;
+      --surface: rgba(15, 21, 36, .72);
+      --surface-solid: #0F1524;
+      --surface-2: #0b1220;
+      --border: rgba(148,163,184,.15);
+      --text: #e5eefc;
+      --text-soft: #94a3b8;
+      --shadow: 0 18px 60px rgba(0, 0, 0, .25);
+      --ring: rgba(37,99,235,.25);
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(37,99,235,.12), transparent 22%),
+        radial-gradient(circle at 92% 12%, rgba(6,182,212,.10), transparent 24%),
+        radial-gradient(circle at 80% 80%, rgba(139,92,246,.10), transparent 25%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      scrollbar-width: thin;
+      scrollbar-color: #1F293D #070A13;
+      transition: background .35s ease, color .35s ease;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070A13; }
+    ::-webkit-scrollbar-thumb { background: #1F293D; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2563EB; }
+
+    .glass {
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .soft-bg { background: var(--surface-2); }
+
+    .tab-active {
+      color: #2563EB;
+      border-bottom: 2px solid #2563EB;
+      background: rgba(37, 99, 235, 0.06);
+    }
+
+    .admin-tab-active {
+      background: #2563EB;
+      color: white;
+    }
+
+    .toast-enter { transform: translateX(100%); opacity: 0; }
+    .toast-enter-active {
+      transform: translateX(0);
+      opacity: 1;
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .toast-leave {
+      transform: translateX(100%);
+      opacity: 0;
+      transition: all 0.28s ease-in;
+    }
+
+    #timerBar { transition: width 1s linear; }
+    mjx-container { display: inline-block !important; }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .bg-grid {
+      background-image:
+        linear-gradient(to right, rgba(148,163,184,.10) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148,163,184,.10) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), transparent 90%);
+      pointer-events: none;
+    }
+
+    .soft-ring { box-shadow: 0 0 0 6px var(--ring); }
+    .question-card { transform: translateZ(0); }
+    .question-card:hover { transform: translateY(-1px); }
+    .btn-hover-lift { transition: transform .18s ease, box-shadow .18s ease; }
+    .btn-hover-lift:hover { transform: translateY(-1px); }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-accentBlue/30 selection:text-white">
+  <div class="fixed inset-0 bg-grid opacity-30"></div>
+  <div class="fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-24 left-[-6rem] w-72 h-72 rounded-full bg-accentBlue/10 blur-3xl"></div>
+    <div class="absolute top-24 right-[-4rem] w-80 h-80 rounded-full bg-accentCyan/10 blur-3xl"></div>
+    <div class="absolute bottom-[-6rem] left-1/3 w-96 h-96 rounded-full bg-accentViolet/10 blur-3xl"></div>
+  </div>
+
+  <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xl transition-all duration-500">
+    <div class="glass p-8 rounded-[2rem] max-w-md w-full relative overflow-hidden mx-4">
+      <div class="absolute inset-0 bg-gradient-to-br from-accentBlue/10 via-transparent to-accentCyan/10 pointer-events-none"></div>
+      <div class="relative z-10 text-center mb-8">
+        <div class="inline-flex p-4 rounded-2xl mb-4 text-[#2AABEE] bg-gradient-to-tr from-[#2AABEE]/20 to-accentCyan/20 shadow-neonBlur">
+          <i class="fa-solid fa-graduation-cap text-3xl animate-bounce"></i>
+        </div>
+        <h3 class="text-3xl font-extrabold tracking-tight">A'lo Ta'lim</h3>
+        <p class="text-sm mt-2" style="color:var(--text-soft)">Tizimga kirish uchun ma'lumotlarni kiriting.</p>
+      </div>
+
+      <div class="space-y-5 relative z-10">
+        <div>
+          <label class="block text-xs font-bold uppercase mb-2" style="color:var(--text-soft)">Ism va Familiya</label>
+          <input type="text" id="authFullname" placeholder="Masalan: Asadbek Olimov"
+                 class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 outline-none text-gray-900 dark:text-white focus:border-[#2AABEE] transition-all">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase mb-2" style="color:var(--text-soft)">Tizim ID / Telefon raqam</label>
+          <input type="text" id="authStudentID" oninput="checkAdminField(this.value)" placeholder="Kiritish..."
+                 class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 outline-none text-gray-900 dark:text-white font-mono focus:border-accentCyan transition-all">
+        </div>
+
+        <div id="adminPasswordWrapper" class="hidden transition-all duration-300">
+          <label class="block text-xs font-bold uppercase mb-2 text-accentAmber">Admin Maxfiy Kod</label>
+          <input type="password" id="authAdminPassword" placeholder="Maxfiy kod "
+                 class="w-full bg-white/70 dark:bg-premiumDark border border-accentAmber/40 rounded-2xl px-4 py-3 outline-none text-gray-900 dark:text-white font-mono focus:border-accentAmber transition-all">
+        </div>
+
+        <button onclick="loginSystem()" class="w-full bg-[#2AABEE] text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-[#2298D6] hover:scale-[1.01] transition-all btn-hover-lift">
+          Tizimga kirish <i class="fa-solid fa-arrow-right-to-bracket ml-2"></i>
+        </button>
+
+        <a href="https://t.me/alo_talim_bot" target="_blank" class="w-full flex items-center justify-center gap-2 bg-[#2AABEE] text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-[#2298D6] hover:scale-[1.01] transition-all btn-hover-lift">
+          <i class="fa-brands fa-telegram text-xl"></i>
+          Bot orqali ro'yxatdan o'tish
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="mainAppView" class="hidden min-h-screen flex flex-col relative z-10">
+    <header class="sticky top-0 z-40 border-b border-gray-200/70 dark:border-premiumBorder glass">
+      <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="h-11 w-11 bg-gradient-to-tr from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <i class="fa-solid fa-graduation-cap text-white text-xl"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-black uppercase tracking-tight">A'lo <span class="text-accentBlue">Ta'lim</span></div>
+            <div class="text-[11px] font-semibold uppercase tracking-[0.2em]" style="color:var(--text-soft)">Premium Onlayn Test Platformasi</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="https://t.me/Namatov_math" target="_blank" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-sm border border-[#0088cc]/20 bg-[#0088cc]/10 text-[#0088cc] hover:bg-[#0088cc] hover:text-white transition-colors btn-hover-lift">
+            <i class="fa-brands fa-telegram text-lg"></i>
+            <span>Bog'lanish</span>
+          </a>
+
+          <div class="hidden sm:block text-right border-l border-gray-200 dark:border-premiumBorder pl-4">
+            <span id="displayUserName" class="text-sm font-bold">Foydalanuvchi</span>
+            <span id="displayUserRole" class="block text-[11px] font-mono text-accentBlue">O'quvchi</span>
+          </div>
+
+          <button onclick="toggleTheme()" id="themeToggleBtn" class="p-2.5 rounded-2xl border border-gray-200 dark:border-premiumBorder bg-white/70 dark:bg-premiumDark text-gray-600 dark:text-gray-300 hover:text-accentBlue transition-all btn-hover-lift">
+            <i id="themeIcon" class="fa-solid fa-moon"></i>
+          </button>
+          <button onclick="logoutSystem()" class="p-2.5 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all btn-hover-lift">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200/70 dark:border-premiumBorder">
+        <div class="max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto hide-scrollbar">
+          <button onclick="switchTab('homeTab')" id="btn-homeTab" class="px-5 py-3 text-sm font-bold text-gray-500 dark:text-gray-400 transition-all whitespace-nowrap tab-active">
+            <i class="fa-solid fa-layer-group mr-2"></i> Fanlar va Testlar
+          </button>
+          <button onclick="switchTab('resultsTab')" id="btn-resultsTab" class="px-5 py-3 text-sm font-bold text-gray-500 dark:text-gray-400 transition-all whitespace-nowrap">
+            <i class="fa-solid fa-chart-simple mr-2"></i> Natijalarim
+          </button>
+          <button onclick="switchTab('adminTab')" id="btn-adminTab" class="hidden px-5 py-3 text-sm font-bold text-rose-500 transition-all whitespace-nowrap border-b-2 border-transparent hover:border-rose-500">
+            <i class="fa-solid fa-shield-halved mr-2"></i> Boshqaruv (Admin)
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+      <div id="homeTab" class="tab-content space-y-8">
+        <div class="glass rounded-[1.75rem] p-5 md:p-6">
+          <div class="flex flex-col xl:flex-row gap-4 items-start xl:items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] mb-2" style="color:var(--text-soft)">
+                <span class="inline-flex h-2 w-2 rounded-full bg-accentEmerald animate-pulse"></span>
+                Platforma holati: faol
+              </div>
+              <h2 class="text-2xl md:text-3xl font-black leading-tight">Murakkab, tezkor va qulay test muhiti</h2>
+              
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 w-full xl:w-auto">
+              <div class="panel rounded-2xl px-4 py-3 min-w-[110px]">
+                <div class="text-[10px] font-bold uppercase tracking-[0.18em]" style="color:var(--text-soft)">Testlar</div>
+                <div id="statTotalTests" class="text-2xl font-black mt-1">0</div>
+              </div>
+              <div class="panel rounded-2xl px-4 py-3 min-w-[110px]">
+                <div class="text-[10px] font-bold uppercase tracking-[0.18em]" style="color:var(--text-soft)">Kategoriyalar</div>
+                <div id="statTotalCats" class="text-2xl font-black mt-1">0</div>
+              </div>
+              <div class="panel rounded-2xl px-4 py-3 min-w-[110px]">
+                <div class="text-[10px] font-bold uppercase tracking-[0.18em]" style="color:var(--text-soft)">Natijalar</div>
+                <div id="statTotalResults" class="text-2xl font-black mt-1">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between glass p-4 rounded-[1.5rem]">
+          <div id="categoriesList" class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar"></div>
+          <div class="relative w-full md:w-80">
+            <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="searchTestInput" oninput="renderHome()" placeholder="Test nomi yoki kodi..."
+                   class="w-full pl-11 pr-4 py-3 bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl text-sm outline-none focus:border-accentBlue transition-colors">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div class="lg:col-span-3 space-y-4">
+            <div class="flex items-center justify-between border-b border-gray-200/70 dark:border-premiumBorder pb-3">
+              <h2 class="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-accentBlue animate-pulse"></div>
+                <span id="currentCategoryTitle">Barcha Testlar</span>
+              </h2>
+              <span class="text-xs text-gray-500 font-bold bg-gray-100 dark:bg-premiumDark px-3 py-1 rounded-lg" id="testCountBadge">0 ta test</span>
+            </div>
+            <div id="testsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+          </div>
+
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b border-gray-200/70 dark:border-premiumBorder pb-3">
+              <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-ranking-star text-amber-500"></i> Reyting
+              </h2>
+              <span class="text-[10px] font-bold uppercase tracking-[0.2em]" style="color:var(--text-soft)">Top 10</span>
+            </div>
+            <div class="glass rounded-[1.5rem] p-2" id="leaderboardList"></div>
+
+            <a href="https://t.me/admin_username" target="_blank" class="md:hidden flex items-center justify-center gap-2 w-full px-4 py-3 rounded-2xl font-bold text-sm border border-[#0088cc]/20 bg-[#0088cc]/10 text-[#0088cc] hover:bg-[#0088cc] hover:text-white transition-colors btn-hover-lift">
+              <i class="fa-brands fa-telegram text-lg"></i>
+              <span>Admin bilan bog'lanish</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div id="resultsTab" class="tab-content hidden space-y-6">
+        <div class="glass rounded-[1.5rem] p-5">
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <h2 class="text-xl font-extrabold text-gray-900 dark:text-white">Mening Natijalarim Arxivi</h2>
+              <p class="text-sm mt-1" style="color:var(--text-soft)">Siz ishlagan barcha testlar bo'yicha tarix.</p>
+            </div>
+            <div class="text-xs font-bold uppercase tracking-[0.18em] px-3 py-2 rounded-xl bg-blue-50 dark:bg-accentBlue/10 text-accentBlue border border-blue-100 dark:border-accentBlue/20">Auto-save yoqilgan</div>
+          </div>
+        </div>
+
+        <div class="panel rounded-[1.5rem] overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm whitespace-nowrap">
+              <thead class="bg-gray-50 dark:bg-premiumDark border-b border-gray-200 dark:border-premiumBorder text-gray-500 uppercase text-[10px] font-bold">
+                <tr>
+                  <th class="p-4">Sana</th>
+                  <th class="p-4">Fan & Test Nomi</th>
+                  <th class="p-4">To'g'ri</th>
+                  <th class="p-4">Foiz</th>
+                  <th class="p-4">Status</th>
+                </tr>
+              </thead>
+              <tbody id="myResultsTable" class="divide-y divide-gray-100 dark:divide-premiumBorder text-gray-800 dark:text-gray-300"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminTab" class="tab-content hidden space-y-6">
+        <div class="glass rounded-[1.5rem] p-5 flex flex-wrap gap-2">
+          <button onclick="switchAdminSub('admin-tests')" id="btn-admin-tests" class="px-4 py-2 text-sm font-bold rounded-lg transition-colors admin-tab-active"><i class="fa-solid fa-file-signature mr-1"></i> Testlar</button>
+          <button onclick="switchAdminSub('admin-cats')" id="btn-admin-cats" class="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg transition-colors"><i class="fa-solid fa-tags mr-1"></i> Kategoriyalar</button>
+          <button onclick="switchAdminSub('admin-stats')" id="btn-admin-stats" class="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg transition-colors"><i class="fa-solid fa-chart-pie mr-1"></i> Statistika</button>
+        </div>
+
+        <div id="admin-tests" class="admin-sub-content space-y-6">
+          <div class="panel rounded-[1.5rem] p-6 space-y-4">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+              <h3 class="text-sm font-bold text-accentBlue uppercase tracking-wider"><i class="fa-solid fa-plus-circle"></i> Yangi Test Qo'shish</h3>
+              <div class="text-xs font-bold text-gray-500">Savollar soni dinamik hisoblanadi</div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <input type="text" id="addTestTitle" placeholder="Test Nomi (Masalan: DTM 2026)" class="col-span-2 w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 text-sm outline-none focus:border-accentBlue">
+              <select id="addTestCategory" class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 text-sm outline-none focus:border-accentBlue"></select>
+              <input type="number" id="addTestTime" placeholder="Vaqt (daqiqa)" class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 text-sm outline-none focus:border-accentBlue">
+              <input type="text" id="addTestCode" placeholder="Maxsus Kod (Masalan: M-1)" class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 text-sm font-mono outline-none focus:border-accentBlue">
+            </div>
+
+            <div class="border border-premiumBorder p-4 rounded-2xl space-y-4 soft-bg">
+              <div class="flex justify-between items-center border-b border-premiumBorder pb-2">
+                <span class="text-xs font-bold text-gray-400 uppercase">Savollar Ro'yxati</span>
+                <button onclick="addQuestionRow()" class="text-xs font-bold bg-accentBlue/10 text-accentBlue px-3 py-1 rounded-lg border border-accentBlue/20 hover:bg-accentBlue hover:text-white transition-all">+ Savol</button>
+              </div>
+              <div id="adminQuestionsContainer" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
+            </div>
+
+            <button onclick="adminAddTest()" class="w-full bg-accentBlue text-white font-bold py-3 rounded-2xl shadow-lg hover:bg-blue-700 transition-colors btn-hover-lift">Testni Saqlash</button>
+          </div>
+
+          <div class="panel rounded-[1.5rem] overflow-hidden">
+            <div class="p-4 border-b border-gray-100 dark:border-premiumBorder bg-gray-50 dark:bg-premiumDark flex justify-between items-center">
+              <h3 class="font-bold text-gray-800 dark:text-gray-200">Mavjud Testlarni Boshqarish</h3>
+              <span class="text-xs text-gray-500 font-bold" id="adminTestsCount">0 ta</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm whitespace-nowrap">
+                <thead class="border-b border-gray-200 dark:border-premiumBorder text-gray-500 uppercase text-[10px] font-bold">
+                  <tr>
+                    <th class="p-4">Test Kodi</th>
+                    <th class="p-4">Nomi</th>
+                    <th class="p-4">Kategoriya</th>
+                    <th class="p-4">Savol</th>
+                    <th class="p-4 text-right">Harakat</th>
+                  </tr>
+                </thead>
+                <tbody id="adminTestsTable" class="divide-y divide-gray-100 dark:divide-premiumBorder text-gray-800 dark:text-gray-300"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="admin-cats" class="admin-sub-content hidden space-y-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="panel rounded-[1.5rem] p-6 space-y-4">
+              <h3 class="text-sm font-bold text-accentEmerald uppercase tracking-wider"><i class="fa-solid fa-tags"></i> Yangi Kategoriya</h3>
+              <input type="text" id="addCatName" placeholder="Nomi (Masalan: Tarix)" class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 text-sm outline-none focus:border-accentEmerald">
+              <select id="addCatIcon" class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 text-sm outline-none focus:border-accentEmerald">
+                <option value="fa-calculator">Hisoblash (Matematika/Fizika)</option>
+                <option value="fa-book">Kitob (Tilllar/Adabiyot)</option>
+                <option value="fa-globe">Globus (Tarix/Geografiya)</option>
+                <option value="fa-flask">Kolba (Kimyo/Biologiya)</option>
+                <option value="fa-laptop-code">Noutbuk (IT/Informatika)</option>
+              </select>
+              <button onclick="adminAddCategory()" class="w-full bg-accentEmerald text-white font-bold py-3 rounded-2xl hover:bg-emerald-600 transition-colors btn-hover-lift">Yaratish</button>
+            </div>
+
+            <div class="panel rounded-[1.5rem] overflow-hidden">
+              <div class="p-4 border-b border-gray-100 dark:border-premiumBorder bg-gray-50 dark:bg-premiumDark">
+                <h3 class="font-bold text-gray-800 dark:text-gray-200">Mavjud Kategoriyalar</h3>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                  <thead class="border-b border-gray-200 dark:border-premiumBorder text-gray-500 uppercase text-[10px] font-bold">
+                    <tr>
+                      <th class="p-4">Ikonka & Nomi</th>
+                      <th class="p-4 text-right">Harakat</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminCatsTable" class="divide-y divide-gray-100 dark:divide-premiumBorder text-gray-800 dark:text-gray-300"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="admin-stats" class="admin-sub-content hidden space-y-6">
+          <div class="panel rounded-[1.5rem] p-6">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Testni tanlang:</label>
+            <select id="statTestSelect" onchange="renderAdminStatsData()" class="w-full bg-white/70 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3 text-sm outline-none focus:border-accentBlue font-bold"></select>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statSummaryCards"></div>
+
+          <div class="panel rounded-[1.5rem] overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm whitespace-nowrap">
+                <thead class="bg-gray-50 dark:bg-premiumDark border-b border-gray-200 dark:border-premiumBorder text-gray-500 uppercase text-[10px] font-bold">
+                  <tr>
+                    <th class="p-4">Sana</th>
+                    <th class="p-4">O'quvchi (ID)</th>
+                    <th class="p-4">To'g'ri Javob</th>
+                    <th class="p-4">Foiz</th>
+                  </tr>
+                </thead>
+                <tbody id="adminStatsTable" class="divide-y divide-gray-100 dark:divide-premiumBorder text-gray-800 dark:text-gray-300"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="quizWorkspace" class="hidden min-h-screen flex flex-col bg-transparent relative z-10">
+    <div class="absolute top-0 left-0 w-full h-1 bg-gray-200 dark:bg-premiumBorder z-50">
+      <div id="timerBar" class="h-full bg-accentBlue w-full"></div>
+    </div>
+
+    <header class="glass h-16 flex items-center justify-between px-6 sticky top-0 z-40 mt-1 border-b border-gray-200/70 dark:border-premiumBorder">
+      <div class="flex items-center gap-4">
+        <span id="quizBadge" class="bg-gray-100 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder text-xs font-mono font-bold px-3 py-1 rounded-xl text-accentBlue">KOD</span>
+        <span id="qProgress" class="hidden sm:inline-block text-xs font-bold text-gray-500">1 / 10</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div id="quizTimer" class="font-mono text-xl font-black text-accentBlue bg-blue-50 dark:bg-accentBlue/10 px-4 py-1.5 rounded-xl border border-blue-200 dark:border-accentBlue/20 animate-pulse">00:00</div>
+        <button onclick="endQuiz(false)" class="hidden sm:block text-xs bg-red-50 dark:bg-red-500/10 text-red-500 border border-red-200 dark:border-red-500/20 px-4 py-1.5 rounded-lg font-bold hover:bg-red-500 hover:text-white transition-colors">Yakunlash</button>
+      </div>
+    </header>
+
+    <main class="flex-grow w-full px-4 py-6 flex flex-col justify-center items-center">
+      <div class="w-full max-w-2xl panel rounded-[2rem] p-6 md:p-10 flex flex-col question-card">
+        <div id="qTextContainer" class="mb-8 border-b border-gray-100 dark:border-premiumBorder pb-8 text-center sm:text-left">
+          <div id="qImageWrapper" class="hidden mb-6 flex justify-center">
+            <img id="qImage" src="" alt="Question Image" class="max-h-64 object-contain rounded-2xl border border-gray-200 dark:border-premiumBorder shadow-sm">
+          </div>
+          <h3 id="qText" class="text-lg md:text-xl font-medium text-gray-900 dark:text-white leading-relaxed font-serif break-words">Savol matni...</h3>
+        </div>
+
+        <div id="qOptions" class="flex flex-col gap-4 w-full"></div>
+
+        <div class="flex justify-between items-center mt-10 pt-6 border-t border-gray-100 dark:border-premiumBorder gap-3 flex-wrap">
+          <button id="btnPrev" onclick="quizPrev()" class="px-5 py-3 rounded-2xl border border-gray-200 dark:border-premiumBorder text-gray-600 dark:text-gray-400 text-sm font-bold hover:bg-gray-100 dark:hover:bg-premiumDark disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Ortga
+          </button>
+          <button onclick="openCanvas()" class="px-4 py-3 bg-gray-100 dark:bg-premiumDark text-accentBlue border border-gray-200 dark:border-premiumBorder rounded-2xl text-xs font-bold hover:bg-gray-200 dark:hover:bg-premiumBorder transition-all">
+            <i class="fa-solid fa-pen-nib mr-1"></i> Qoralama
+          </button>
+          <button id="btnNext" onclick="quizNext()" class="px-5 py-3 rounded-2xl bg-accentBlue text-white text-sm font-bold shadow-md hover:bg-blue-600 transition-all">
+            Keyingi <i class="fa-solid fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-6 glass rounded-[1.5rem] p-4 flex flex-wrap gap-2 justify-center max-w-3xl w-full" id="qPalette"></div>
+
+      <button onclick="endQuiz(false)" class="sm:hidden mt-6 w-full max-w-2xl text-sm bg-red-500 text-white px-4 py-4 rounded-2xl font-bold shadow-lg">Testni Yakunlash</button>
+    </main>
+  </div>
+
+  <div id="canvasModal" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-premiumCard w-full max-w-3xl h-[600px] rounded-[2rem] p-4 flex flex-col border border-gray-200 dark:border-premiumBorder">
+      <div class="flex justify-between items-center mb-3 gap-3">
+        <span class="font-bold text-gray-900 dark:text-white"><i class="fa-solid fa-pen text-accentBlue mr-2"></i> Elektron Qoralama</span>
+        <div class="flex items-center gap-3 flex-wrap justify-end">
+          <select id="canvasMode" onchange="setCanvasStyle()" class="bg-gray-100 dark:bg-premiumDark text-xs rounded-xl px-3 py-2 outline-none text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-premiumBorder">
+            <option value="draw">🖊️ Qalam</option>
+            <option value="erase">🧼 O'chirgich</option>
+          </select>
+          <button onclick="clearDraw()" class="text-xs bg-red-500/10 text-red-500 px-3 py-2 rounded-xl font-bold">Tozalash</button>
+          <button onclick="closeCanvas()" class="text-gray-500 hover:text-white px-2"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+      </div>
+      <canvas id="scratchCanvas" class="flex-grow bg-gray-50 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-[1.25rem] cursor-crosshair touch-none"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const THEME_KEY = 'alotalim_theme';
+    const SECURE_ADMIN_PASS = '0890';
+    const API_URL = 'https://a-1-2v1c.onrender.com';
+
+    let appState = JSON.parse(localStorage.getItem('alotalim_state')) || { currentUser: null };
+
+    let dbCategories = JSON.parse(localStorage.getItem('alotalim_cats')) || [
+      { id: 'cat_math', name: 'Matematika', icon: 'fa-calculator' },
+      { id: 'cat_lang', name: 'Ona Tili', icon: 'fa-book' }
+    ];
+
+    let dbTests = JSON.parse(localStorage.getItem('alotalim_tests')) || [
+      {
+        id: 'M-101',
+        title: 'Matematika Blok Test',
+        categoryId: 'cat_math',
+        qCount: 2,
+        time: 10,
+        isNew: true,
+        questions: [
+          { q: 'Hisoblang: $\\int_0^2 3x^2 dx$', options: ['6', '8', '12', '4'], correct: 1, image: null },
+          { q: 'Agar $2^x = 32$ bo\'lsa, $x$ ni toping.', options: ['3', '4', '5', '6'], correct: 2, image: null }
+        ]
+      }
+    ];
+
+    let dbResults = JSON.parse(localStorage.getItem('alotalim_results')) || [];
+    let currentCatFilter = 'all';
+    let searchQuery = '';
+    let questionCounter = 0;
+
+    let quizData = null;
+    let activeQIndex = 0;
+    let userAnswers = [];
+    let timerInterval = null;
+    let totalTimeSeconds = 0;
+    let timeLeft = 0;
+    let tabViolationCount = 0;
+    let isExitingQuizInput = false;
+
+    function saveToStorage() {
+      localStorage.setItem('alotalim_state', JSON.stringify(appState));
+      localStorage.setItem('alotalim_cats', JSON.stringify(dbCategories));
+      localStorage.setItem('alotalim_tests', JSON.stringify(dbTests));
+      localStorage.setItem('alotalim_results', JSON.stringify(dbResults));
+    }
+
+    function triggerMathRender() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        setTimeout(() => window.MathJax.typesetPromise(), 50);
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const colorCls = type === 'success' ? 'bg-accentEmerald border-emerald-500' : (type === 'error' ? 'bg-accentRose border-red-500' : 'bg-accentBlue border-blue-500');
+      const iconCls = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-circle-exclamation' : 'fa-info-circle');
+      toast.className = `flex items-center gap-3 px-4 py-3 rounded-2xl shadow-lg border text-white font-medium text-sm toast-enter pointer-events-auto ${colorCls}`;
+      toast.innerHTML = `<i class="fa-solid ${iconCls} text-lg"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('toast-enter-active'));
+      setTimeout(() => {
+        toast.classList.remove('toast-enter-active');
+        toast.classList.add('toast-leave');
+        setTimeout(() => toast.remove(), 300);
+      }, 2800);
+    }
+
+    function applyTheme(theme) {
+      const isDark = theme === 'dark';
+      document.documentElement.classList.toggle('dark', isDark);
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem(THEME_KEY, theme);
+
+      const icon = document.getElementById('themeIcon');
+      if (icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun text-amber-500';
+      setCanvasStyle();
+    }
+
+    function initTheme() {
+      const stored = localStorage.getItem(THEME_KEY);
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(stored || (prefersDark ? 'dark' : 'light'));
+    }
+
+    function toggleTheme() {
+      const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+      applyTheme(next);
+    }
+
+    function checkAdminField(value) {
+      const wrap = document.getElementById('adminPasswordWrapper');
+      if (value.trim().toUpperCase() === 'ADMIN') wrap.classList.remove('hidden');
+      else wrap.classList.add('hidden');
+    }
+
+    async function loginSystem() {
+      const name = document.getElementById('authFullname').value.trim();
+      const id = document.getElementById('authStudentID').value.trim();
+      if (!name || !id) return showToast('Barcha maydonlarni to‘ldiring!', 'error');
+
+      if (id.toUpperCase() === 'ADMIN') {
+        const pass = document.getElementById('authAdminPassword').value;
+        if (pass !== SECURE_ADMIN_PASS) return showToast('Admin kodi xato!', 'error');
+        appState.currentUser = { name, id, role: 'admin' };
+        saveToStorage();
+        initAppView();
+        showToast('Tizimga muvaffaqiyatli kirdingiz!');
+        return;
+      }
+
+      const loginBtn = document.querySelector('button[onclick="loginSystem()"]');
+      const originalText = loginBtn ? loginBtn.innerHTML : 'Tizimga kirish';
+      if (loginBtn) {
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Tekshirilmoqda...';
+        loginBtn.disabled = true;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullname: name, student_id: id })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          appState.currentUser = { name: data.name, id, role: data.role };
+          saveToStorage();
+          initAppView();
+          showToast('Tizimga muvaffaqiyatli kirdingiz!');
+        } else {
+          showToast(data.error || 'Tizimga kirib bo‘lmadi. Bot orqali ro‘yxatdan o‘ting!', 'error');
+        }
+      } catch (error) {
+        console.error(error);
+        showToast('Server bilan ulanishda xatolik! Internetni yoki serverni tekshiring.', 'error');
+      } finally {
+        if (loginBtn) {
+          loginBtn.innerHTML = originalText;
+          loginBtn.disabled = false;
+        }
+      }
+    }
+
+    function logoutSystem() {
+      if (confirm('Tizimdan chiqishni tasdiqlaysizmi?')) {
+        appState.currentUser = null;
+        saveToStorage();
+        window.location.reload();
+      }
+    }
+
+    function initAppView() {
+      document.getElementById('authModal').classList.add('hidden');
+      document.getElementById('mainAppView').classList.remove('hidden');
+      document.getElementById('displayUserName').innerText = appState.currentUser.name;
+      document.getElementById('displayUserRole').innerText = appState.currentUser.role === 'admin' ? 'Administrator' : 'O\'quvchi';
+      document.getElementById('btn-adminTab').classList.toggle('hidden', appState.currentUser.role !== 'admin');
+      switchTab('homeTab');
+      renderHome();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+      document.querySelectorAll('[id^="btn-"]').forEach(btn => btn.classList.remove('tab-active'));
+      const activeMain = document.getElementById(`btn-${tabId}`);
+      if (activeMain) activeMain.classList.add('tab-active');
+      if (tabId === 'homeTab') renderHome();
+      if (tabId === 'resultsTab') renderMyResults();
+      if (tabId === 'adminTab') {
+        switchAdminSub('admin-tests');
+        renderAdminView();
+      }
+    }
+
+    function switchAdminSub(subId) {
+      document.querySelectorAll('.admin-sub-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(subId).classList.remove('hidden');
+      document.querySelectorAll('[id^="btn-admin-"]').forEach(btn => {
+        btn.classList.remove('admin-tab-active');
+        btn.classList.add('text-gray-500');
+      });
+      const activeBtn = document.getElementById(`btn-${subId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('admin-tab-active');
+        activeBtn.classList.remove('text-gray-500');
+      }
+      if (subId === 'admin-stats') renderAdminStatsDropdown();
+    }
+
+    function setCategoryFilter(catId) {
+      currentCatFilter = catId;
+      renderHome();
+    }
+
+    function renderHome() {
+      const searchEl = document.getElementById('searchTestInput');
+      searchQuery = searchEl ? searchEl.value.toLowerCase() : '';
+
+      document.getElementById('statTotalTests').innerText = dbTests.length;
+      document.getElementById('statTotalCats').innerText = dbCategories.length;
+      document.getElementById('statTotalResults').innerText = dbResults.length;
+
+      const catList = document.getElementById('categoriesList');
+      let catHTML = `<button onclick="setCategoryFilter('all')" class="px-4 py-2 rounded-2xl text-sm font-bold border transition-all whitespace-nowrap ${currentCatFilter === 'all' ? 'bg-accentBlue text-white border-accentBlue shadow-md' : 'bg-white/70 dark:bg-premiumCard border-gray-200 dark:border-premiumBorder text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-premiumDark'}">Barchasi</button>`;
+
+      dbCategories.forEach(c => {
+        const isActive = currentCatFilter === c.id;
+        catHTML += `<button onclick="setCategoryFilter('${c.id}')" class="px-4 py-2 rounded-2xl text-sm font-bold border transition-all flex items-center gap-2 whitespace-nowrap ${isActive ? 'bg-accentBlue text-white border-accentBlue shadow-md' : 'bg-white/70 dark:bg-premiumCard border-gray-200 dark:border-premiumBorder text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-premiumDark'}"><i class="fa-solid ${c.icon}"></i> ${c.name}</button>`;
+      });
+      catList.innerHTML = catHTML;
+
+      let filteredTests = dbTests;
+      if (currentCatFilter !== 'all') filteredTests = filteredTests.filter(t => t.categoryId === currentCatFilter);
+      if (searchQuery) filteredTests = filteredTests.filter(t => t.title.toLowerCase().includes(searchQuery) || t.id.toLowerCase().includes(searchQuery));
+
+      document.getElementById('testCountBadge').innerText = `${filteredTests.length} ta test`;
+      if (currentCatFilter !== 'all') {
+        const cname = dbCategories.find(c => c.id === currentCatFilter)?.name;
+        document.getElementById('currentCategoryTitle').innerText = `${cname} bo'yicha testlar`;
+      } else {
+        document.getElementById('currentCategoryTitle').innerText = searchQuery ? 'Qidiruv natijalari' : 'Barcha Testlar';
+      }
+
+      const testGrid = document.getElementById('testsGrid');
+      if (filteredTests.length === 0) {
+        testGrid.innerHTML = `<div class="col-span-full p-8 text-center text-gray-500 panel rounded-[1.5rem]">Hech narsa topilmadi.</div>`;
+      } else {
+        testGrid.innerHTML = filteredTests.map(t => {
+          const cat = dbCategories.find(c => c.id === t.categoryId);
+          return `
+            <div class="panel p-5 rounded-[1.75rem] hover:shadow-softCard hover:border-accentBlue/50 transition-all relative overflow-hidden group flex flex-col justify-between">
+              <div class="absolute -right-4 -top-4 w-20 h-20 bg-accentBlue/5 rounded-full group-hover:scale-[2] transition-transform duration-500"></div>
+              <div>
+                <div class="flex justify-between items-start mb-3 relative z-10">
+                  <span class="text-[10px] font-mono bg-gray-100 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder px-2 py-1 rounded-lg text-accentBlue flex items-center gap-1"><i class="fa-solid ${cat?.icon || 'fa-tag'}"></i> ${cat?.name || 'Fan'}</span>
+                  <span class="text-[10px] font-bold text-gray-500 bg-gray-100 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder px-2 py-1 rounded-lg">${t.id}</span>
+                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-tight relative z-10">${t.title}</h3>
+                <p class="text-xs text-gray-500 mb-5 relative z-10 flex items-center gap-3"><span><i class="fa-solid fa-list-ol mr-1"></i> ${t.qCount} ta savol</span> <span><i class="fa-solid fa-clock mr-1"></i> ${t.time} daq</span></p>
+              </div>
+              <button onclick="initQuiz('${t.id}')" class="w-full bg-blue-50 dark:bg-accentBlue/10 hover:bg-accentBlue text-accentBlue hover:text-white border border-blue-200 dark:border-accentBlue/20 font-bold py-3 rounded-2xl text-sm transition-colors relative z-10 btn-hover-lift">Testni Boshlash</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const userStats = {};
+      dbResults.forEach(r => {
+        if (!userStats[r.userId]) userStats[r.userId] = { name: r.userName, totalPerc: 0, count: 0 };
+        userStats[r.userId].totalPerc += (r.score / r.total) * 100;
+        userStats[r.userId].count++;
+      });
+      const leaders = Object.values(userStats).map(u => ({ name: u.name, avg: Math.round(u.totalPerc / u.count) })).sort((a, b) => b.avg - a.avg).slice(0, 10);
+      const lbList = document.getElementById('leaderboardList');
+      if (leaders.length === 0) {
+        lbList.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Hali natijalar yo'q.</p>`;
+      } else {
+        lbList.innerHTML = leaders.map((l, i) => `
+          <div class="flex justify-between items-center p-3 border-b last:border-0 border-gray-100 dark:border-premiumBorder hover:bg-gray-50 dark:hover:bg-premiumDark transition-colors rounded-xl">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${i===0?'bg-amber-100 text-amber-600':i===1?'bg-gray-200 text-gray-600':'bg-gray-100 dark:bg-premiumDark text-gray-500'}">${i+1}</span>
+              <span class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate w-32">${l.name}</span>
+            </div>
+            <span class="text-xs font-mono font-bold text-accentEmerald bg-emerald-50 dark:bg-accentEmerald/10 px-2 py-1 rounded-lg border border-emerald-100 dark:border-accentEmerald/20">${l.avg}%</span>
+          </div>
+        `).join('');
+      }
+      triggerMathRender();
+    }
+
+    function renderMyResults() {
+      const myRes = dbResults.filter(r => r.userId === appState.currentUser.id).reverse();
+      const tbody = document.getElementById('myResultsTable');
+      if (myRes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Siz hali test topshirmagansiz.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = myRes.map(r => {
+        const perc = Math.round((r.score / r.total) * 100);
+        return `
+          <tr class="hover:bg-gray-50 dark:hover:bg-premiumDark/40 transition-colors">
+            <td class="p-4 text-xs text-gray-500 font-mono">${r.date}</td>
+            <td class="p-4 font-bold text-gray-900 dark:text-white">${r.testName} <span class="block text-[10px] text-accentBlue mt-0.5">${r.testId}</span></td>
+            <td class="p-4 font-mono text-gray-600 dark:text-gray-300">${r.score} / ${r.total}</td>
+            <td class="p-4 font-mono font-bold ${perc >= 70 ? 'text-accentEmerald' : 'text-accentRose'}">${perc}%</td>
+            <td class="p-4"><span class="px-2 py-1 rounded-lg text-[10px] font-bold ${perc >= 60 ? 'bg-emerald-50 text-accentEmerald border border-emerald-200' : 'bg-red-50 text-red-500 border border-red-200'}">${perc >= 60 ? 'O\'TDI' : 'YIQILDI'}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderAdminView() {
+      document.getElementById('addTestCategory').innerHTML = dbCategories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      document.getElementById('adminQuestionsContainer').innerHTML = '';
+      questionCounter = 0;
+      addQuestionRow();
+      renderAdminCatsTable();
+      renderAdminTestsTable();
+      document.getElementById('adminTestsCount').innerText = `${dbTests.length} ta`;
+    }
+
+    function renderAdminCatsTable() {
+      const tbody = document.getElementById('adminCatsTable');
+      tbody.innerHTML = dbCategories.map(c => `
+        <tr class="hover:bg-gray-50 dark:hover:bg-premiumDark transition-colors">
+          <td class="p-4 font-bold text-gray-800 dark:text-white"><i class="fa-solid ${c.icon} text-gray-400 mr-2"></i> ${c.name}</td>
+          <td class="p-4 text-right">
+            <button onclick="deleteCategory('${c.id}')" class="text-xs bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border border-red-200 px-3 py-1.5 rounded-xl transition-colors font-bold">
+              <i class="fa-solid fa-trash mr-1"></i> O'chirish
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAdminTestsTable() {
+      const tbody = document.getElementById('adminTestsTable');
+      tbody.innerHTML = dbTests.map(t => {
+        const cat = dbCategories.find(c => c.id === t.categoryId);
+        return `
+          <tr class="hover:bg-gray-50 dark:hover:bg-premiumDark transition-colors">
+            <td class="p-4 font-mono text-xs text-accentBlue font-bold">${t.id}</td>
+            <td class="p-4 font-bold text-gray-800 dark:text-white truncate max-w-[200px]">${t.title}</td>
+            <td class="p-4 text-xs text-gray-500">${cat ? cat.name : 'Noma\'lum'}</td>
+            <td class="p-4 text-xs font-mono text-gray-500">${t.qCount} ta</td>
+            <td class="p-4 text-right">
+              <button onclick="deleteTest('${t.id}')" class="text-xs bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border border-red-200 px-3 py-1.5 rounded-xl transition-colors font-bold">
+                <i class="fa-solid fa-trash mr-1"></i> O'chirish
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('adminTestsCount').innerText = `${dbTests.length} ta`;
+    }
+
+    function deleteCategory(id) {
+      if (confirm('DIQQAT! Ushbu kategoriyani o‘chirsangiz, unga tegishli barcha testlar ham o‘chib ketadi. Davom etasizmi?')) {
+        dbCategories = dbCategories.filter(c => c.id !== id);
+        dbTests = dbTests.filter(t => t.categoryId !== id);
+        saveToStorage();
+        showToast('Kategoriya va unga tegishli testlar o‘chirildi', 'success');
+        renderAdminView();
+        renderHome();
+      }
+    }
+
+    function deleteTest(id) {
+      if (confirm(`"${id}" kodli testni butunlay o'chirib tashlaysizmi?`)) {
+        dbTests = dbTests.filter(t => t.id !== id);
+        saveToStorage();
+        showToast('Test muvaffaqiyatli o‘chirildi', 'success');
+        renderAdminTestsTable();
+        renderHome();
+      }
+    }
+
+    function renderAdminStatsDropdown() {
+      const select = document.getElementById('statTestSelect');
+      if (dbTests.length === 0) {
+        select.innerHTML = `<option value="">Testlar mavjud emas</option>`;
+        return;
+      }
+      select.innerHTML = `<option value="">-- Testni tanlang --</option>` + dbTests.map(t => `<option value="${t.id}">${t.title} (${t.id})</option>`).join('');
+      document.getElementById('adminStatsTable').innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-500">Yuqoridan test tanlang</td></tr>`;
+      document.getElementById('statSummaryCards').innerHTML = '';
+    }
+
+    function renderAdminStatsData() {
+      const testId = document.getElementById('statTestSelect').value;
+      if (!testId) return;
+      const tData = dbTests.find(t => t.id === testId);
+      const results = dbResults.filter(r => r.testId === testId);
+      const tbody = document.getElementById('adminStatsTable');
+      const summaryDiv = document.getElementById('statSummaryCards');
+
+      if (!tData) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-500">Test topilmadi.</td></tr>`;
+        summaryDiv.innerHTML = '';
+        return;
+      }
+
+      if (results.length === 0) {
+        summaryDiv.innerHTML = '';
+        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-500">Ushbu testni hali hech kim ishlamagan.</td></tr>`;
+        return;
+      }
+
+      let totalScore = 0;
+      let passedCount = 0;
+      tbody.innerHTML = results.map(r => {
+        const perc = Math.round((r.score / r.total) * 100);
+        totalScore += perc;
+        if (perc >= 60) passedCount++;
+        return `
+          <tr class="hover:bg-gray-50 dark:hover:bg-premiumDark transition-colors">
+            <td class="p-4 text-xs text-gray-500 font-mono">${r.date}</td>
+            <td class="p-4 font-bold text-gray-800 dark:text-white">${r.userName} <span class="text-[10px] text-gray-400 font-mono block">${r.userId}</span></td>
+            <td class="p-4 font-mono text-gray-600 dark:text-gray-300">${r.score} / ${r.total}</td>
+            <td class="p-4 font-mono font-bold ${perc >= 60 ? 'text-accentEmerald' : 'text-accentRose'}">${perc}%</td>
+          </tr>
+        `;
+      }).join('');
+
+      const avgScore = Math.round(totalScore / results.length);
+      const passRate = Math.round((passedCount / results.length) * 100);
+      summaryDiv.innerHTML = `
+        <div class="bg-blue-50 dark:bg-accentBlue/10 border border-blue-100 dark:border-accentBlue/20 p-4 rounded-2xl">
+          <div class="text-[10px] font-bold text-accentBlue uppercase mb-1">Qatnashuvchilar</div>
+          <div class="text-2xl font-black text-gray-900 dark:text-white">${results.length} ta</div>
+        </div>
+        <div class="bg-emerald-50 dark:bg-accentEmerald/10 border border-emerald-100 dark:border-accentEmerald/20 p-4 rounded-2xl">
+          <div class="text-[10px] font-bold text-accentEmerald uppercase mb-1">O'rtacha Ball</div>
+          <div class="text-2xl font-black text-gray-900 dark:text-white">${avgScore}%</div>
+        </div>
+        <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 p-4 rounded-2xl">
+          <div class="text-[10px] font-bold text-amber-600 uppercase mb-1">Savollar Soni</div>
+          <div class="text-2xl font-black text-gray-900 dark:text-white">${tData.qCount} ta</div>
+        </div>
+        <div class="bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20 p-4 rounded-2xl">
+          <div class="text-[10px] font-bold text-purple-600 uppercase mb-1">O'zlashtirish</div>
+          <div class="text-2xl font-black text-gray-900 dark:text-white">${passRate}%</div>
+        </div>
+      `;
+    }
+
+    function adminAddCategory() {
+      const name = document.getElementById('addCatName').value.trim();
+      const icon = document.getElementById('addCatIcon').value;
+      if (!name) return showToast('Kategoriya nomini kiriting!', 'error');
+      const id = 'cat_' + Date.now();
+      dbCategories.push({ id, name, icon });
+      saveToStorage();
+      showToast('Yangi kategoriya qo‘shildi!');
+      document.getElementById('addCatName').value = '';
+      renderAdminView();
+      renderHome();
+    }
+
+    function handleImageUpload(inputEl) {
+      const file = inputEl.files[0];
+      const statusSpan = document.getElementById(`img-status-${inputEl.dataset.qid}`);
+      if (!file) {
+        statusSpan.innerText = 'Rasm tanlanmadi';
+        statusSpan.className = 'text-[10px] text-gray-400 block mt-1';
+        inputEl.dataset.b64 = '';
+        return;
+      }
+      statusSpan.innerText = 'Yuklanmoqda...';
+      statusSpan.className = 'text-[10px] text-amber-500 block mt-1 font-bold animate-pulse';
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 600;
+          let width = img.width;
+          let height = img.height;
+          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          inputEl.dataset.b64 = canvas.toDataURL('image/jpeg', 0.6);
+          statusSpan.innerText = 'Rasm yuklandi ✅';
+          statusSpan.className = 'text-[10px] text-accentEmerald block mt-1 font-bold';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addQuestionRow() {
+      questionCounter++;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'p-4 border border-premiumBorder rounded-2xl bg-white dark:bg-premiumCard space-y-3 relative shadow-sm text-xs';
+      wrapper.id = `qRow-${questionCounter}`;
+      wrapper.innerHTML = `
+        <div class="flex justify-between items-center mb-1 pb-2 border-b border-gray-100 dark:border-premiumBorder">
+          <span class="font-bold text-accentBlue text-sm">Savol #${questionCounter}</span>
+          ${questionCounter > 1 ? `<button onclick="this.parentElement.parentElement.remove()" class="text-red-500 font-bold hover:underline bg-red-50 dark:bg-red-500/10 px-2 py-1 rounded-lg">O'chirish</button>` : ''}
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="md:col-span-2">
+            <textarea rows="2" placeholder="Savol matni..." class="q-text-input w-full bg-gray-50 dark:bg-premiumDark border border-premiumBorder rounded-xl px-3 py-2 outline-none text-gray-800 dark:text-gray-200 focus:border-accentBlue"></textarea>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-1">Rasm (Ixtiyoriy)</label>
+            <input type="file" accept="image/*" data-qid="${questionCounter}" onchange="handleImageUpload(this)" class="q-img-input w-full text-[10px] file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-accentBlue/10 file:text-accentBlue hover:file:bg-accentBlue/20 cursor-pointer">
+            <span id="img-status-${questionCounter}" class="text-[10px] text-gray-400 block mt-1">Rasm tanlanmadi</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="A variant" class="q-opt-A w-full bg-gray-50 dark:bg-premiumDark border border-premiumBorder rounded-xl px-3 py-2 outline-none text-gray-800 dark:text-gray-200">
+          <input type="text" placeholder="B variant" class="q-opt-B w-full bg-gray-50 dark:bg-premiumDark border border-premiumBorder rounded-xl px-3 py-2 outline-none text-gray-800 dark:text-gray-200">
+          <input type="text" placeholder="C variant" class="q-opt-C w-full bg-gray-50 dark:bg-premiumDark border border-premiumBorder rounded-xl px-3 py-2 outline-none text-gray-800 dark:text-gray-200">
+          <input type="text" placeholder="D variant" class="q-opt-D w-full bg-gray-50 dark:bg-premiumDark border border-premiumBorder rounded-xl px-3 py-2 outline-none text-gray-800 dark:text-gray-200">
+        </div>
+        <div class="flex items-center gap-2 pt-1">
+          <span class="text-gray-500 font-bold">To'g'ri javob:</span>
+          <select class="q-correct bg-emerald-50 dark:bg-accentEmerald/10 text-accentEmerald border border-emerald-200 dark:border-accentEmerald/20 rounded-xl px-3 py-1 font-bold outline-none cursor-pointer">
+            <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+          </select>
+        </div>
+      `;
+      document.getElementById('adminQuestionsContainer').appendChild(wrapper);
+    }
+
+    function adminAddTest() {
+      const title = document.getElementById('addTestTitle').value.trim();
+      const categoryId = document.getElementById('addTestCategory').value;
+      const code = document.getElementById('addTestCode').value.trim().toUpperCase();
+      const time = parseInt(document.getElementById('addTestTime').value);
+      if (!title || !code || !categoryId || isNaN(time) || time <= 0) return showToast("Test ma'lumotlarini to'liq va to'g'ri kiriting!", 'error');
+      if (dbTests.find(t => t.id === code)) return showToast('Bu kodli test bazada allaqachon mavjud!', 'error');
+
+      const questionRows = document.querySelectorAll('[id^="qRow-"]');
+      const constructedQuestions = [];
+      let validationFailed = false;
+
+      questionRows.forEach(row => {
+        const text = row.querySelector('.q-text-input').value.trim();
+        const optA = row.querySelector('.q-opt-A').value.trim();
+        const optB = row.querySelector('.q-opt-B').value.trim();
+        const optC = row.querySelector('.q-opt-C').value.trim();
+        const optD = row.querySelector('.q-opt-D').value.trim();
+        const correctIdx = parseInt(row.querySelector('.q-correct').value);
+        const imgB64 = row.querySelector('.q-img-input').dataset.b64 || null;
+        if (!text || !optA || !optB || !optC || !optD) validationFailed = true;
+        constructedQuestions.push({ q: text, options: [optA, optB, optC, optD], correct: correctIdx, image: imgB64 });
+      });
+
+      if (validationFailed) return showToast("Savollar yoki variantlar bo'sh qolgan!", 'error');
+      if (constructedQuestions.length === 0) return showToast("Kamida 1 ta savol qo'shing!", 'error');
+
+      dbTests.unshift({ id: code, title, categoryId, qCount: constructedQuestions.length, time, isNew: true, questions: constructedQuestions });
+      saveToStorage();
+      showToast('Test yaratildi!', 'success');
+      document.getElementById('addTestTitle').value = '';
+      document.getElementById('addTestCode').value = '';
+      document.getElementById('addTestTime').value = '';
+      renderAdminView();
+      renderHome();
+    }
+
+    async function initQuiz(testId) {
+      quizData = dbTests.find(t => t.id === testId);
+      if (!quizData || !quizData.questions) return showToast('Test topilmadi!', 'error');
+      tabViolationCount = 0;
+      isExitingQuizInput = false;
+      document.getElementById('mainAppView').classList.add('hidden');
+      document.getElementById('quizWorkspace').classList.remove('hidden');
+      document.getElementById('quizBadge').innerText = quizData.id;
+      activeQIndex = 0;
+      userAnswers = new Array(quizData.qCount).fill(null);
+      totalTimeSeconds = quizData.time * 60;
+      timeLeft = totalTimeSeconds;
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(handleTimer, 1000);
+      handleTimer();
+      loadQuizQuestion();
+            try {
+        await enterFullscreen();
+      } catch (e) {
+        console.warn('Fullscreen request blocked', e);
+      }
+
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        showToast('Testni boshlash uchun fullscreen rejimiga o‘tish kerak!', 'error');
+        return;
+      }
+    }
+
+    function handleTimer() {
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        endQuiz(true);
+        return;
+      }
+      timeLeft--;
+      const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const s = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('quizTimer').innerText = `${m}:${s}`;
+      const perc = (timeLeft / totalTimeSeconds) * 100;
+      const bar = document.getElementById('timerBar');
+      bar.style.width = `${perc}%`;
+      if (perc < 20) {
+        bar.classList.add('bg-red-600');
+        bar.classList.remove('bg-accentBlue');
+      } else {
+        bar.classList.remove('bg-red-600');
+        bar.classList.add('bg-accentBlue');
+      }
+    }
+
+    function loadQuizQuestion() {
+      document.getElementById('qProgress').innerText = `${activeQIndex + 1} / ${quizData.qCount}`;
+      const qObj = quizData.questions[activeQIndex];
+      const imgWrap = document.getElementById('qImageWrapper');
+      const imgEl = document.getElementById('qImage');
+      if (qObj.image && qObj.image.length > 10) {
+        imgEl.src = qObj.image;
+        imgWrap.classList.remove('hidden');
+      } else {
+        imgWrap.classList.add('hidden');
+      }
+      document.getElementById('qText').innerHTML = qObj.q;
+      const optsLetters = ['A', 'B', 'C', 'D'];
+      document.getElementById('qOptions').innerHTML = qObj.options.map((optText, idx) => {
+        const isSelected = userAnswers[activeQIndex] === idx;
+        return `
+          <button onclick="selectOption(${idx})" class="w-full flex items-center p-4 rounded-[1.25rem] border text-left transition-all ${isSelected ? 'border-accentBlue bg-blue-50 dark:bg-accentBlue/10 text-accentBlue font-bold ring-2 ring-accentBlue/30 shadow-md' : 'border-gray-200 dark:border-premiumBorder bg-white dark:bg-premiumCard text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-premiumDark'}">
+            <div class="h-8 w-8 rounded-xl border flex-shrink-0 ${isSelected ? 'border-accentBlue bg-accentBlue text-white shadow-glowBlue' : 'border-gray-300 dark:border-premiumBorder bg-gray-50 dark:bg-premiumDark'} flex justify-center items-center text-sm mr-4 font-bold transition-all">${optsLetters[idx]}</div>
+            <div class="leading-relaxed break-words">${optText}</div>
+          </button>
+        `;
+      }).join('');
+      document.getElementById('btnPrev').disabled = activeQIndex === 0;
+      document.getElementById('btnNext').innerHTML = activeQIndex === quizData.qCount - 1 ? 'Yakunlash <i class="fa-solid fa-flag-checkered ml-2"></i>' : 'Keyingi <i class="fa-solid fa-arrow-right ml-2"></i>';
+      renderPalette();
+      triggerMathRender();
+    }
+
+    function selectOption(idx) { userAnswers[activeQIndex] = idx; loadQuizQuestion(); }
+    function jumpToQuestion(idx) { activeQIndex = idx; loadQuizQuestion(); }
+
+    function renderPalette() {
+      const pal = document.getElementById('qPalette');
+      pal.innerHTML = userAnswers.map((ans, idx) => {
+        const isCurrent = idx === activeQIndex;
+        const isAnswered = ans !== null;
+        let classes = 'w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold cursor-pointer transition-all border shadow-sm ';
+        if (isCurrent) classes += 'ring-2 ring-accentBlue border-transparent bg-accentBlue text-white scale-110';
+        else if (isAnswered) classes += 'border-transparent bg-emerald-500 text-white';
+        else classes += 'border-gray-200 dark:border-premiumBorder bg-gray-50 dark:bg-premiumDark text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-800';
+        return `<div onclick="jumpToQuestion(${idx})" class="${classes}">${idx + 1}</div>`;
+      }).join('');
+    }
+
+    function quizPrev() { if (activeQIndex > 0) { activeQIndex--; loadQuizQuestion(); } }
+    function quizNext() { if (activeQIndex < quizData.qCount - 1) activeQIndex++; else endQuiz(false); loadQuizQuestion(); }
+
+    function endQuiz(isAutoTimeOut = false) {
+      if (!isAutoTimeOut) {
+        const unselectedCount = userAnswers.filter(a => a === null).length;
+        if (unselectedCount > 0) {
+          if (!confirm(`Diqqat! ${unselectedCount} ta savolga javob belgilanmadi. Baribir testni yakunlaysizmi?`)) return;
+        } else {
+          if (!confirm('Barcha savollarga javob berdingiz. Testni yakunlashni tasdiqlaysizmi?')) return;
+        }
+      } else {
+        showToast('Vaqt tugadi! Test avtomatik yakunlandi.', 'error');
+      }
+
+      clearInterval(timerInterval);
+      let correctScore = 0;
+      quizData.questions.forEach((qObj, idx) => { if (userAnswers[idx] === qObj.correct) correctScore++; });
+      const todayStr = new Date().toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      dbResults.push({ userId: appState.currentUser.id, userName: appState.currentUser.name, testId: quizData.id, testName: quizData.title, score: correctScore, total: quizData.qCount, date: todayStr });
+      saveToStorage();
+      showToast(`Natijangiz: ${correctScore} / ${quizData.qCount}`, 'success');
+      exitFullscreen();
+      document.getElementById('quizWorkspace').classList.add('hidden');
+      document.getElementById('mainAppView').classList.remove('hidden');
+      switchTab('resultsTab');
+    }
+
+    const cvs = document.getElementById('scratchCanvas');
+    const ctx = cvs.getContext('2d');
+    let isDrawing = false;
+
+    function openCanvas() {
+      document.getElementById('canvasModal').classList.remove('hidden');
+      cvs.width = cvs.parentElement.clientWidth - 32;
+      cvs.height = cvs.parentElement.clientHeight - 80;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 4;
+      setCanvasStyle();
+    }
+    function closeCanvas() { document.getElementById('canvasModal').classList.add('hidden'); }
+    function clearDraw() { ctx.clearRect(0, 0, cvs.width, cvs.height); }
+
+    function getPos(e) {
+      const rect = cvs.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function setCanvasStyle() {
+      if (!ctx) return;
+      const mode = document.getElementById('canvasMode').value;
+      const isDark = document.documentElement.classList.contains('dark');
+      if (mode === 'erase') {
+        ctx.strokeStyle = isDark ? '#0F1524' : '#FFFFFF';
+        ctx.lineWidth = 30;
+      } else {
+        ctx.strokeStyle = isDark ? '#06B6D4' : '#2563EB';
+        ctx.lineWidth = 3;
+      }
+    }
+
+    cvs.addEventListener('mousedown', e => { isDrawing = true; setCanvasStyle(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+    cvs.addEventListener('mousemove', e => { if (!isDrawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+    cvs.addEventListener('mouseup', () => isDrawing = false);
+    cvs.addEventListener('mouseleave', () => isDrawing = false);
+    cvs.addEventListener('touchstart', e => { isDrawing = true; setCanvasStyle(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); e.preventDefault(); }, { passive: false });
+    cvs.addEventListener('touchmove', e => { if (!isDrawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }, { passive: false });
+    cvs.addEventListener('touchend', () => isDrawing = false);
+
+    function enterFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err));
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    }
+
+    function exitFullscreen() {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        isExitingQuizInput = true;
+        if (document.exitFullscreen) {
+          document.exitFullscreen().then(() => { isExitingQuizInput = false; }).catch(() => { isExitingQuizInput = false; });
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+          isExitingQuizInput = false;
+        }
+      }
+    }
+
+    function handleCheatViolation() {
+      const isQuizActive = quizData !== null && !document.getElementById('quizWorkspace').classList.contains('hidden');
+      if (isQuizActive && !isExitingQuizInput) {
+        if (document.hidden || (!document.fullscreenElement && !document.webkitFullscreenElement)) {
+          tabViolationCount++;
+          if (tabViolationCount >= 3) {
+            alert("Tizim jiddiy qoidabuzarlik aniqladi! Test jarayonida to'liq ekrandan chiqqaningiz yoki boshqa oynaga o'tganingiz sababli, testingiz avtomatik ravishda yakunlandi.");
+            endQuiz(true);
+          } else {
+            alert(`DIQQAT! Test topshirish jarayonida to'liq ekran (Full Screen) rejimidan chiqish yoki boshqa tabga o'tish mutlaqo taqiqlanadi!\n\nOgohlantirish: ${tabViolationCount}/3. Agarda 3 taga yetsa test avtomatik ravishda yakunlanadi!`);
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFullscreen();
+          }
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleCheatViolation);
+    document.addEventListener('fullscreenchange', handleCheatViolation);
+    document.addEventListener('webkitfullscreenchange', handleCheatViolation);
+
+    window.addEventListener('contextmenu', (e) => {
+      const isQuizActive = quizData !== null && !document.getElementById('quizWorkspace').classList.contains('hidden');
+      if (isQuizActive) {
+        e.preventDefault();
+        showToast("Xavfsizlik tizimi: Test paytida o'ng tugmani bosish taqiqlangan!", 'error');
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      const isQuizActive = quizData !== null && !document.getElementById('quizWorkspace').classList.contains('hidden');
+      if (isQuizActive) {
+        const isModifierPressed = e.ctrlKey || e.metaKey;
+        const key = e.key.toLowerCase();
+        if (isModifierPressed && (key === 'c' || key === 'v' || key === 'u')) {
+          e.preventDefault();
+          showToast("Xavfsizlik tizimi: Matnni nusxalash taqiqlangan!", 'error');
+          return;
+        }
+        if (e.key === 'F12') {
+          e.preventDefault();
+          showToast('Xavfsizlik tizimi: Kod tahlili taqiqlangan!', 'error');
+          return;
+        }
+        if (isModifierPressed && e.shiftKey && (key === 'i' || key === 'j' || key === 'c')) {
+          e.preventDefault();
+          showToast('Xavfsizlik tizimi: Konsolni ochish taqiqlangan!', 'error');
+          return;
+        }
+      }
+    });
+
+    window.onload = function () {
+      initTheme();
+      if (appState.currentUser) initAppView();
+      else renderHome();
+    };
+  </script>
+</body>
+</html>

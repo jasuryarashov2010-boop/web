@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MATH PRO — Premium Ekspert Test Platformasi</title>
+  <title>MATH PRO — Premium Test & Imtihon Platformasi</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <script>
     window.MathJax = {
@@ -28,19 +30,19 @@
           },
           colors: {
             premiumDark: '#05070F',
-            premiumCard: '#0B0F19',
-            premiumBorder: '#1E2638',
+            premiumCard: '#0C111D',
+            premiumBorder: '#1E293B',
             accentBlue: '#3B82F6',
             accentCyan: '#06B6D4',
             accentEmerald: '#10B981',
-            accentRose: '#F43F5E',
+            accentRose: '#EF4444',
             accentAmber: '#F59E0B',
             accentViolet: '#8B5CF6'
           },
           boxShadow: {
             glowBlue: '0 0 25px rgba(59, 130, 246, 0.25)',
-            neonBlur: '0 0 35px rgba(6, 182, 212, 0.2)',
-            softCard: '0 20px 50px rgba(0, 0, 0, 0.3)'
+            neonCyan: '0 0 30px rgba(6, 182, 212, 0.20)',
+            premium: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
           }
         }
       }
@@ -49,27 +51,23 @@
 
   <style>
     :root {
-      --bg-0: #f4f7fb;
-      --bg-1: #edf3ff;
+      --bg-0: #f8fafc;
+      --bg-1: #f1f5f9;
       --surface: rgba(255, 255, 255, 0.75);
       --surface-solid: #ffffff;
-      --surface-2: #f7f9ff;
       --border: rgba(148, 163, 184, 0.2);
       --text: #0f172a;
       --text-soft: #64748b;
-      --shadow: 0 15px 45px rgba(15, 23, 42, 0.05);
     }
 
     html.dark {
-      --bg-0: #04060E;
-      --bg-1: #080C16;
-      --surface: rgba(11, 15, 25, 0.7);
-      --surface-solid: #0B0F19;
-      --surface-2: #0E1424;
-      --border: rgba(255, 255, 255, 0.06);
-      --text: #F1F5F9;
-      --text-soft: #94A3B8;
-      --shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      --bg-0: #04060e;
+      --bg-1: #090e1a;
+      --surface: rgba(12, 17, 29, 0.75);
+      --surface-solid: #0C111D;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-soft: #94a3b8;
     }
 
     body {
@@ -84,832 +82,1375 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
     }
 
     .panel {
       background: var(--surface-solid);
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
     }
 
     .tab-active {
       color: #3B82F6;
-      border-bottom: 2px solid #3B82F6;
+      border-bottom: 3px solid #3B82F6;
       background: rgba(59, 130, 246, 0.05);
     }
 
-    .bg-grid {
-      background-image: linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
-      background-size: 40px 40px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,1), transparent 95%);
+    .admin-tab-active {
+      background: linear-gradient(135deg, #3B82F6, #06B6D4);
+      color: white;
     }
 
-    .shimmer {
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-      background-size: 200% 100%;
-      animation: loading-shimmer 1.5s infinite;
+    .bg-grid {
+      background-image: 
+        linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
     }
-    @keyframes loading-shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+
+    /* Option tanlangandagi chiroyli effektlar */
+    .option-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option-btn:hover {
+      transform: scale(1.01) translateX(4px);
+    }
+
+    /* Animatsiyalar */
+    @keyframes floatParticle {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+      50% { opacity: 0.5; }
+      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+    }
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      animation: floatParticle 8s infinite linear;
     }
   </style>
 </head>
-<body class="min-h-screen selection:bg-accentBlue/30 selection:text-white antialiased">
-  <div class="fixed inset-0 bg-grid pointer-events-none"></div>
-  <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none max-w-sm w-full"></div>
+<body class="min-h-screen relative selection:bg-accentBlue/30">
 
-  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl">
-    <div class="glass p-8 rounded-[2.5rem] max-w-md w-full relative overflow-hidden mx-4 shadow-softCard">
-      <div class="text-center mb-8">
-        <div class="inline-flex p-4 rounded-2xl mb-4 text-accentBlue bg-accentBlue/10 shadow-glowBlue">
-          <i class="fa-solid fa-brain-circuit text-3xl"></i>
+  <div class="fixed inset-0 bg-grid pointer-events-none z-0"></div>
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-40 left-[-10rem] w-96 h-96 rounded-full bg-accentBlue/10 blur-[120px]"></div>
+    <div class="absolute top-40 right-[-10rem] w-96 h-96 rounded-full bg-accentCyan/10 blur-[120px]"></div>
+    <div class="absolute bottom-[-10rem] left-1/3 w-[30rem] h-[30rem] rounded-full bg-accentViolet/10 blur-[150px]"></div>
+  </div>
+
+  <div id="toastContainer" class="fixed top-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none max-w-sm w-full"></div>
+
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-2xl transition-all duration-500">
+    <div class="glass p-8 rounded-[2.5rem] max-w-md w-full relative overflow-hidden mx-4 shadow-premium">
+      <div class="absolute inset-0 bg-gradient-to-br from-accentBlue/5 via-transparent to-accentCyan/5 pointer-events-none"></div>
+      
+      <div class="text-center mb-8 relative z-10">
+        <div class="inline-flex p-4 rounded-3xl mb-4 text-[#2AABEE] bg-[#2AABEE]/10 shadow-neonCyan animate-pulse">
+          <i class="fa-solid fa-graduation-cap text-4xl"></i>
         </div>
-        <h3 class="text-3xl font-black tracking-tight">MATH PRO</h3>
-        <p class="text-sm mt-1" style="color:var(--text-soft)">Ekspert tahlil va test platformasi</p>
+        <h3 class="text-3xl font-black tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">MATH PRO</h3>
+        <p class="text-xs mt-2 font-medium" style="color:var(--text-soft)">Bot Integratsiyalashgan Premium Imtihon Tizimi</p>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-4 relative z-10">
         <div>
-          <label class="block text-xs font-bold uppercase mb-1.5" style="color:var(--text-soft)">Ism va Familiya</label>
-          <input type="text" id="authFullname" placeholder="Masalan: Asadbek Olimov" class="w-full bg-white/50 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 outline-none focus:border-accentBlue transition-all text-sm">
+          <label class="block text-xs font-bold uppercase mb-2 tracking-wider" style="color:var(--text-soft)">Ism va Familiya</label>
+          <input type="text" id="authFullname" placeholder="Masalan: Jasur Yarashov"
+                 class="w-full bg-white/50 dark:bg-premiumDark/80 border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3.5 outline-none focus:border-accentBlue font-medium transition-all">
         </div>
+
         <div>
-          <label class="block text-xs font-bold uppercase mb-1.5" style="color:var(--text-soft)">Tizim ID / Telefon</label>
-          <input type="text" id="authStudentID" placeholder="ID raqamingiz" class="w-full bg-white/50 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 outline-none focus:border-accentBlue transition-all text-sm font-mono">
+          <label class="block text-xs font-bold uppercase mb-2 tracking-wider" style="color:var(--text-soft)">Tizim ID / Telegram ID</label>
+          <input type="text" id="authStudentID" oninput="checkAdminRoleTrigger(this.value)" placeholder="Masalan: 5894032"
+                 class="w-full bg-white/50 dark:bg-premiumDark/80 border border-gray-200 dark:border-premiumBorder rounded-2xl px-4 py-3.5 outline-none focus:border-accentCyan font-mono transition-all">
         </div>
-        <button onclick="loginSystem()" class="w-full bg-accentBlue text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-blue-600 transition-all text-sm">
-          Tizimga kirish <i class="fa-solid fa-arrow-right ml-1"></i>
+
+        <div id="adminPasswordWrapper" class="hidden transform scale-95 opacity-0 transition-all duration-300">
+          <label class="block text-xs font-bold uppercase mb-2 text-accentAmber tracking-wider">Admin Maxfiy Kaliti</label>
+          <input type="password" id="authAdminPassword" placeholder="Admin maxfiy parolini kiriting"
+                 class="w-full bg-white/50 dark:bg-premiumDark/80 border border-accentAmber/40 rounded-2xl px-4 py-3.5 outline-none focus:border-accentAmber font-mono text-center tracking-widest transition-all">
+        </div>
+
+        <button onclick="loginSystemManual()" class="w-full bg-gradient-to-r from-accentBlue to-accentCyan text-white font-bold py-4 rounded-2xl shadow-glowBlue hover:opacity-90 transform hover:scale-[1.01] transition-all flex items-center justify-center gap-2">
+          Tizimga Kirish <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </button>
+
+        <div class="relative flex py-2 items-center">
+          <div class="flex-grow border-t border-gray-200 dark:border-premiumBorder"></div>
+          <span class="flex-shrink mx-4 text-xs font-bold uppercase tracking-widest" style="color:var(--text-soft)">Yoki</span>
+          <div class="flex-grow border-t border-gray-200 dark:border-premiumBorder"></div>
+        </div>
+
+        <a href="https://t.me/math_999_bot" target="_blank" class="w-full flex items-center justify-center gap-3 bg-[#2AABEE] text-white font-bold py-4 rounded-2xl hover:bg-[#2496d0] transition-all shadow-md">
+          <i class="fa-brands fa-telegram text-2xl animate-bounce"></i>
+          Telegram Bot orqali Kirish
+        </a>
       </div>
     </div>
   </div>
 
   <div id="mainAppView" class="hidden min-h-screen flex flex-col relative z-10">
-    <header class="sticky top-0 z-40 border-b border-gray-200/50 dark:border-premiumBorder glass">
-      <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between gap-4">
+    
+    <header class="sticky top-0 z-40 glass border-b border-gray-200/50 dark:border-premiumBorder">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        
         <div class="flex items-center gap-3">
-          <div class="h-11 w-11 bg-gradient-to-tr from-accentBlue to-accentCyan rounded-xl flex items-center justify-center shadow-md">
-            <i class="fa-solid fa-atom text-white text-xl"></i>
+          <div class="h-12 w-12 bg-gradient-to-tr from-accentBlue to-accentCyan rounded-2xl flex items-center justify-center shadow-glowBlue">
+            <i class="fa-solid fa-atom text-white text-2xl animate-spin" style="animation-duration: 6s;"></i>
           </div>
           <div>
-            <div class="text-2xl font-black tracking-tight">MATH<span class="text-accentBlue">PRO</span></div>
-            <div class="text-[10px] font-bold tracking-widest uppercase" style="color:var(--text-soft)">PREMIUM PLATFORMA</div>
+            <div class="text-2xl font-black uppercase tracking-tight bg-gradient-to-r from-accentBlue to-accentCyan bg-clip-text text-transparent">MATH<span class="text-gray-400 dark:text-white">PRO</span></div>
+            <div class="text-[10px] font-bold uppercase tracking-[0.25em]" style="color:var(--text-soft)">Bot Verifikatsiyalangan Muhit</div>
           </div>
         </div>
 
         <div class="flex items-center gap-3">
-          <div class="hidden sm:block text-right border-r border-gray-200 dark:border-premiumBorder pr-4">
-            <span id="displayUserName" class="text-sm font-bold block">Ism Familiya</span>
-            <span id="displayUserRole" class="text-[11px] font-mono text-accentBlue uppercase tracking-wider">O'quvchi</span>
+          <div class="hidden sm:flex flex-col text-right border-r border-gray-200 dark:border-premiumBorder pr-4">
+            <span id="displayUserName" class="text-sm font-extrabold tracking-tight">Yuklanmoqda...</span>
+            <span id="displayUserRole" class="text-[11px] font-bold font-mono uppercase text-accentCyan">O'quvchi</span>
           </div>
-          <button onclick="toggleTheme()" class="p-3 rounded-xl border border-gray-200 dark:border-premiumBorder bg-white/50 dark:bg-premiumDark hover:text-accentBlue transition-all">
-            <i id="themeIcon" class="fa-solid fa-moon"></i>
+
+          <button onclick="toggleThemeMode()" class="p-3 rounded-2xl glass text-gray-500 hover:text-accentBlue transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
           </button>
-          <button onclick="logoutSystem()" class="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
-            <i class="fa-solid fa-power-off"></i>
+          
+          <button onclick="logoutSystem()" class="p-3 rounded-2xl bg-accentRose/10 text-accentRose hover:bg-accentRose hover:text-white transition-all">
+            <i class="fa-solid fa-power-off text-lg"></i>
           </button>
         </div>
       </div>
 
-      <div class="border-t border-gray-200/50 dark:border-premiumBorder">
-        <div class="max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto" id="dynamicTabsContainer">
-          <button onclick="switchTab('homeTab')" id="btn-homeTab" class="px-5 py-3 text-sm font-bold transition-all whitespace-nowrap tab-active">
-            <i class="fa-solid fa-cubes mr-1.5"></i> Fanlar va Testlar
+      <div class="border-t border-gray-200/50 dark:border-premiumBorder bg-gray-50/50 dark:bg-premiumDark/30">
+        <div class="max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto hide-scrollbar">
+          <button onclick="switchTabPanel('homeTab')" id="btn-homeTab" class="px-6 py-3.5 text-sm font-bold transition-all whitespace-nowrap tab-active">
+            <i class="fa-solid fa-folder-open mr-2"></i> Mavjud Imtihonlar
           </button>
-          <button onclick="switchTab('resultsTab')" id="btn-resultsTab" class="px-5 py-3 text-sm font-bold text-gray-400 transition-all whitespace-nowrap">
-            <i class="fa-solid fa-chart-line mr-1.5"></i> Natijalarim
+          <button onclick="switchTabPanel('resultsTab')" id="btn-resultsTab" class="px-6 py-3.5 text-sm font-bold text-gray-400 transition-all whitespace-nowrap">
+            <i class="fa-solid fa-chart-line mr-2"></i> Mening Natijalarim
           </button>
-          </div>
+          <button onclick="switchTabPanel('adminTab')" id="btn-adminTab" class="hidden px-6 py-3.5 text-sm font-bold text-accentRose border-b-2 border-transparent hover:border-accentRose transition-all whitespace-nowrap">
+            <i class="fa-solid fa-user-shield mr-2"></i> Boshqaruv (Admin)
+          </button>
+        </div>
       </div>
     </header>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full relative z-10">
+      
       <div id="homeTab" class="tab-content space-y-6">
-        <div class="glass rounded-[2rem] p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-black">Intellektual Test Platformasi</h2>
-            <p class="text-sm mt-1" style="color:var(--text-soft)">O'z bilimingizni professional va chuqurlashtirilgan savollar bilan sinab ko'ring.</p>
-          </div>
-          <div class="flex gap-4 w-full md:w-auto">
-            <input type="text" id="searchTestInput" oninput="renderHome()" placeholder="Kodni yozing..." class="w-full md:w-64 px-4 py-2.5 bg-white/50 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-xl text-sm outline-none focus:border-accentBlue">
+        <div class="glass rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-accentBlue/5 rounded-full blur-2xl"></div>
+          <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+              <span class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-accentEmerald mb-3 bg-accentEmerald/10 px-3 py-1 rounded-full">
+                <span class="h-2 w-2 rounded-full bg-accentEmerald animate-ping"></span> Cloud Sinxronizatsiya Faol
+              </span>
+              <h2 class="text-3xl font-black tracking-tight">Onlayn Matematika va Mantiq Laboratoriyasi</h2>
+              <p class="text-sm mt-2 max-w-2xl" style="color:var(--text-soft)">Tizimdagi barcha formulalar real vaqt rejimida MathJax tahlilchisi yordamida yuqori sifatli vizual ko'rinishga o'tkaziladi.</p>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-3 w-full lg:w-auto">
+              <div class="panel rounded-2xl p-4 min-w-[110px] text-center bg-gray-500/5">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Testlar</span>
+                <span id="globalStatTests" class="text-2xl font-black block mt-1">0</span>
+              </div>
+              <div class="panel rounded-2xl p-4 min-w-[110px] text-center bg-gray-500/5">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Fanlar</span>
+                <span id="globalStatCats" class="text-2xl font-black block mt-1">0</span>
+              </div>
+              <div class="panel rounded-2xl p-4 min-w-[110px] text-center bg-gray-500/5">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Urinishlar</span>
+                <span id="globalStatAttempts" class="text-2xl font-black block mt-1">0</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div id="categoriesList" class="flex gap-2 overflow-x-auto pb-2"></div>
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 glass p-4 rounded-2xl">
+          <div id="homeCategoriesContainer" class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar"></div>
+          <div class="relative w-full md:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="searchBar" oninput="performHomeSearch(this.value)" placeholder="Imtihon nomi yoki kodini kiriting..."
+                   class="w-full pl-11 pr-4 py-3 bg-white/50 dark:bg-premiumDark border border-gray-200 dark:border-premiumBorder rounded-xl text-sm outline-none focus:border-accentBlue transition-all">
+          </div>
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div class="lg:col-span-3 space-y-4">
-            <div id="testsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              </div>
+            <div id="homeTestsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
           </div>
+          
           <div class="space-y-4">
-            <div class="panel rounded-[1.5rem] p-4">
-              <h3 class="font-bold text-sm uppercase tracking-wider mb-3 text-accentAmber"><i class="fa-solid fa-trophy mr-1"></i> Global Reyting (Top 5)</h3>
-              <div id="leaderboardList" class="space-y-2"></div>
+            <div class="panel rounded-2xl p-4 bg-gray-50/50 dark:bg-premiumCard/40">
+              <h3 class="text-sm font-black uppercase tracking-wider mb-4 flex items-center gap-2 text-accentAmber">
+                <i class="fa-solid fa-trophy"></i> Global Top 10 Reyting
+              </h3>
+              <div id="leaderboardContainer" class="space-y-2"></div>
             </div>
           </div>
         </div>
       </div>
 
       <div id="resultsTab" class="tab-content hidden space-y-4">
-        <div class="panel rounded-2xl p-6">
-          <h2 class="text-xl font-bold">Mening Tarixim va Tahlillar</h2>
-          <p class="text-xs text-gray-400 mt-1">Isbotlangan test natijalaringiz va umumiy ko'rsatkichlaringiz.</p>
+        <div class="glass p-6 rounded-2xl">
+          <h2 class="text-xl font-black">Shaxsiy Imtihonlar Arxivi</h2>
+          <p class="text-xs" style="color:var(--text-soft)">Siz yakunlagan barcha sinovlar xavfsiz blokcheyn-simulyatsiya arxivida saqlanadi.</p>
         </div>
-        <div class="panel rounded-2xl overflow-hidden overflow-x-auto">
-          <table class="w-full text-left text-sm whitespace-nowrap">
-            <thead class="bg-gray-100 dark:bg-premiumDark/50 text-[11px] uppercase text-gray-400 font-bold border-b border-premiumBorder">
-              <tr>
-                <th class="p-4">Sana</th>
-                <th class="p-4">Test Nomi</th>
-                <th class="p-4">To'g'ri / Umumiy</th>
-                <th class="p-4">To'plangan Ball</th>
-                <th class="p-4">Harakat</th>
-              </tr>
-            </thead>
-            <tbody id="myResultsTable" class="divide-y divide-premiumBorder"></tbody>
-          </table>
-        </div>
-      </div>
 
-      <div id="adminTabWrapper"></div>
-    </main>
-  </div>
-
-  <div id="quizWorkspace" class="hidden min-h-screen flex flex-col bg-[#04060E] relative z-50">
-    <div class="absolute top-0 left-0 w-full h-1 bg-premiumBorder">
-      <div id="timerBar" class="h-full bg-accentBlue w-full transition-all duration-1000"></div>
-    </div>
-    <header class="h-16 border-b border-premiumBorder glass flex items-center justify-between px-6 sticky top-0 z-50">
-      <div class="flex items-center gap-4">
-        <span id="quizBadge" class="bg-accentBlue/10 text-accentBlue border border-accentBlue/20 text-xs font-mono font-bold px-3 py-1 rounded-lg">CODE</span>
-        <span id="qProgress" class="text-xs font-bold text-gray-400">1 / 10</span>
-      </div>
-      <div class="flex items-center gap-4">
-        <div id="quizTimer" class="font-mono text-lg font-black text-accentBlue bg-accentBlue/10 px-3 py-1 rounded-xl border border-accentBlue/20">00:00</div>
-        <button onclick="endQuiz(false)" class="text-xs bg-red-500/10 text-red-500 px-4 py-1.5 rounded-lg font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">Tugatish</button>
-      </div>
-    </header>
-
-    <main class="flex-grow flex flex-col items-center justify-center p-4">
-      <div class="w-full max-w-3xl panel rounded-[2rem] p-6 md:p-8 space-y-6">
-        <div id="qTextContainer" class="border-b border-premiumBorder pb-6">
-          <div class="text-xs font-bold text-accentCyan mb-2 uppercase tracking-widest flex justify-between">
-            <span>Savol matni</span>
-            <span id="qWeightBadge" class="text-accentAmber">Ball: 0</span>
+        <div class="panel rounded-2xl overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-gray-100 dark:bg-premiumDark border-b border-gray-200 dark:border-premiumBorder text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                <tr>
+                  <th class="p-4">Sana va Vaqt</th>
+                  <th class="p-4">Imtihon Nomi</th>
+                  <th class="p-4">To'g'ri javoblar</th>
+                  <th class="p-4">Ko'rsatkich</th>
+                  <th class="p-4">Status</th>
+                </tr>
+              </thead>
+              <tbody id="personalResultsTableBody" class="divide-y divide-gray-100 dark:divide-premiumBorder font-medium"></tbody>
+            </table>
           </div>
-          <h3 id="qText" class="text-lg font-medium leading-relaxed font-serif text-gray-200 break-words select-none">Yuklanmoqda...</h3>
-        </div>
-        <div id="qOptions" class="flex flex-col gap-3"></div>
-        <div class="flex justify-between items-center pt-4 border-t border-premiumBorder">
-          <button id="btnPrev" onclick="quizPrev()" class="px-4 py-2 rounded-xl border border-premiumBorder text-sm font-bold hover:bg-premiumDark transition-all">&larr; Ortga</button>
-          <button onclick="openCanvas()" class="px-4 py-2 bg-premiumDark text-accentCyan border border-premiumBorder rounded-xl text-xs font-bold"><i class="fa-solid fa-compass-drafting mr-1"></i> Qoralama</button>
-          <button id="btnNext" onclick="quizNext()" class="px-4 py-2 rounded-xl bg-accentBlue text-white text-sm font-bold">Keyingi &rarr;</button>
         </div>
       </div>
-      <div id="qPalette" class="mt-4 flex flex-wrap gap-1.5 justify-center max-w-3xl"></div>
+
+      <div id="adminTab" class="tab-content hidden space-y-6">
+        <div class="glass p-4 rounded-2xl flex flex-wrap gap-2">
+          <button onclick="switchAdminSection('admin-tests')" id="subBtn-admin-tests" class="px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-xl admin-tab-active transition-all"><i class="fa-solid fa-file-pen mr-2"></i> Test Konstruktori</button>
+          <button onclick="switchAdminSection('admin-cats')" id="subBtn-admin-cats" class="px-5 py-2.5 text-xs font-black uppercase tracking-wider text-gray-400 rounded-xl transition-all"><i class="fa-solid fa-layer-group mr-2"></i> Kategoriyalar</button>
+          <button onclick="switchAdminSection('admin-stats')" id="subBtn-admin-stats" class="px-5 py-2.5 text-xs font-black uppercase tracking-wider text-gray-400 rounded-xl transition-all"><i class="fa-solid fa-chart-pie mr-2"></i> Kengaytirilgan Statistika</button>
+        </div>
+
+        <div id="admin-tests" class="admin-sub-view space-y-6">
+          <div class="panel rounded-2xl p-6 space-y-4">
+            <h3 class="text-base font-black uppercase tracking-wider text-accentBlue border-b border-gray-200 dark:border-premiumBorder pb-2"><i class="fa-solid fa-square-plus mr-2"></i> Yangi Imtihon Paketi Yaratish</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <input type="text" id="newTestTitle" placeholder="Imtihon paketi nomi (Masalan: DTM Premium Matematika)" class="md:col-span-2 w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 text-sm outline-none focus:border-accentBlue">
+              <select id="newTestCategory" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 text-sm outline-none focus:border-accentBlue"></select>
+              <input type="number" id="newTestTime" placeholder="Ajratilgan vaqt (daqiqa)" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 text-sm outline-none focus:border-accentBlue">
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <input type="text" id="newTestCode" placeholder="Maxsus imtihon kodi (Masalan: M-777)" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 text-sm font-mono outline-none focus:border-accentBlue">
+            </div>
+
+            <div class="border border-gray-200 dark:border-premiumBorder p-4 rounded-xl space-y-4 bg-gray-500/5">
+              <div class="flex justify-between items-center border-b border-gray-200 dark:border-premiumBorder pb-2">
+                <span class="text-xs font-black uppercase tracking-widest text-gray-400">Savollar Tarkibi</span>
+                <button onclick="addNewQuestionRowToBuilder()" class="text-xs font-bold bg-accentBlue/10 text-accentBlue px-4 py-2 rounded-xl border border-accentBlue/20 hover:bg-accentBlue hover:text-white transition-all">+ Yangi Savol Qo'shish</button>
+              </div>
+              <div id="builderQuestionsStack" class="space-y-6 max-h-[600px] overflow-y-auto pr-2"></div>
+            </div>
+
+            <button onclick="saveCompiledTestPackage()" class="w-full bg-gradient-to-r from-accentBlue to-accentCyan text-white font-black py-4 rounded-xl shadow-glowBlue hover:opacity-90 transition-all">PAKETNI SAQLASH VA TIZIMGA JOYLASHTIRISH</button>
+          </div>
+
+          <div class="panel rounded-2xl overflow-hidden">
+            <div class="p-4 bg-gray-100 dark:bg-premiumDark border-b border-gray-200 dark:border-premiumBorder">
+              <h4 class="text-sm font-black uppercase tracking-wider">Tizimdagi Jami Imtihonlar</h4>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="border-b border-gray-200 dark:border-premiumBorder text-[10px] font-bold uppercase text-gray-400">
+                  <tr>
+                    <th class="p-4">Imtihon Kodi</th>
+                    <th class="p-4">Nomi</th>
+                    <th class="p-4">Yo'nalish</th>
+                    <th class="p-4">Savollar</th>
+                    <th class="p-4 text-right">Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="adminTestsListTableBody" class="divide-y divide-gray-100 dark:divide-premiumBorder"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="admin-cats" class="admin-sub-view hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="panel rounded-2xl p-6 space-y-4 h-fit">
+            <h3 class="text-sm font-black uppercase tracking-wider text-accentEmerald"><i class="fa-solid fa-folder-plus"></i> Yangi Yo'nalish/Fan yaratish</h3>
+            <input type="text" id="newCatName" placeholder="Kategoriya nomi (Masalan: Kimyo)" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 text-sm outline-none focus:border-accentEmerald">
+            <select id="newCatIcon" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-xl px-4 py-3 text-sm outline-none focus:border-accentEmerald">
+              <option value="fa-calculator">Matematika / Fizika (Kalkulyator)</option>
+              <option value="fa-flask">Kimyo / Biologiya (Kolba)</option>
+              <option value="fa-book">Adabiyot / Ona Tili (Kitob)</option>
+              <option value="fa-laptop-code">Informatika / IT (Noutbuk)</option>
+              <option value="fa-globe">Geografiya / Tarix (Globus)</option>
+            </select>
+            <button onclick="saveCreatedCategory()" class="w-full bg-accentEmerald text-white font-bold py-3 rounded-xl hover:opacity-90 transition-all">Kategoriyani Saqlash</button>
+          </div>
+
+          <div class="panel rounded-2xl overflow-hidden">
+            <div class="p-4 bg-gray-100 dark:bg-premiumDark border-b border-gray-200 dark:border-premiumBorder">
+              <h4 class="text-sm font-black uppercase tracking-wider">Mavjud Yo'nalishlar</h4>
+            </div>
+            <table class="w-full text-left text-sm">
+              <thead class="border-b border-gray-200 dark:border-premiumBorder text-[10px] font-bold uppercase text-gray-400">
+                <tr>
+                  <th class="p-4">Ikonka & Nomi</th>
+                  <th class="p-4 text-right">O'chirish</th>
+                </tr>
+              </thead>
+              <tbody id="adminCatsListTableBody" class="divide-y divide-gray-100 dark:divide-premiumBorder"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="admin-stats" class="admin-sub-view hidden space-y-6">
+          <div class="panel rounded-2xl p-6 bg-gradient-to-r from-premiumCard to-premiumDark">
+            <label class="block text-sm font-black uppercase tracking-wider mb-2 text-accentCyan">Statistikani ko'rish uchun testni tanlang:</label>
+            <select id="adminStatsTestSelector" onchange="renderSpecificTestStatistics(this.value)" class="w-full bg-gray-500/10 border border-accentCyan/30 rounded-xl px-4 py-3.5 text-sm outline-none font-bold text-accentCyan focus:border-accentCyan"></select>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statsDynamicMetricCards">
+            </div>
+
+          <div class="panel rounded-2xl overflow-hidden">
+            <div class="p-4 bg-gray-100 dark:bg-premiumDark border-b border-gray-200 dark:border-premiumBorder flex justify-between items-center">
+              <h4 class="text-sm font-black uppercase tracking-wider text-gray-400">Ushbu Test Bo'yicha Topshirganlar Ro'yxati</h4>
+              <input type="text" id="statsStudentSearch" oninput="filterStatsStudentList()" placeholder="Talaba ismini qidirish..." class="bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-lg px-3 py-1.5 text-xs outline-none focus:border-accentBlue">
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="border-b border-gray-200 dark:border-premiumBorder text-[10px] font-bold uppercase text-gray-400">
+                  <tr>
+                    <th class="p-4">Sana</th>
+                    <th class="p-4">O'quvchi Ismi (ID)</th>
+                    <th class="p-4">To'g'ri Javoblar</th>
+                    <th class="p-4">Foiz ko'rsatkichi</th>
+                  </tr>
+                </thead>
+                <tbody id="adminStatsStudentsTableBody" class="divide-y divide-gray-100 dark:divide-premiumBorder font-medium">
+                  <tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">Hech qanday ma'lumot mavjud emas. Yuqoridan test tanlang.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
-  <div id="reviewModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col">
-    <header class="h-16 border-b border-premiumBorder flex items-center justify-between px-6 bg-premiumDark">
-      <h3 class="font-bold text-lg text-white"><i class="fa-solid fa-receipt text-accentBlue mr-2"></i> Test Natijasi va Xatolar tahlili</h3>
-      <button onclick="closeReview()" class="p-2 text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
-    </header>
-    <div class="flex-grow overflow-y-auto p-4 md:p-8 max-w-4xl w-full mx-auto space-y-6" id="reviewContent"></div>
-  </div>
+  <div id="quizWorkspace" class="hidden min-h-screen flex flex-col bg-gradient-to-b from-premiumDark to-premiumCard relative z-50">
+    
+    <div class="absolute top-0 left-0 w-full h-1.5 bg-gray-800 z-50">
+      <div id="quizTimerProgressBar" class="h-full bg-gradient-to-r from-accentBlue to-accentCyan w-full transition-all duration-1000"></div>
+    </div>
 
-  <div id="canvasModal" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-premiumCard w-full max-w-2xl h-[520px] rounded-2xl p-4 flex flex-col border border-premiumBorder">
-      <div class="flex justify-between items-center mb-2">
-        <span class="font-bold text-xs uppercase text-gray-400"><i class="fa-solid fa-pen text-accentBlue mr-1"></i> Elektron Qoralama</span>
-        <div class="flex items-center gap-2">
-          <select id="canvasMode" onchange="setCanvasStyle()" class="bg-premiumDark text-xs rounded-lg px-2 py-1.5 outline-none border border-premiumBorder">
-            <option value="draw">🖊️ Qalam</option>
-            <option value="erase">🧼 O'chirgich</option>
-          </select>
-          <select id="canvasBrushWidth" onchange="setCanvasStyle()" class="bg-premiumDark text-xs rounded-lg px-2 py-1.5 outline-none border border-premiumBorder">
-            <option value="2">Yupqa</option>
-            <option value="5" selected>O'rtacha</option>
-            <option value="10">Yo'g'on</option>
-          </select>
-          <button onclick="clearDraw()" class="text-xs bg-red-500/10 text-red-500 px-3 py-1.5 rounded-lg font-bold">Tozalash</button>
-          <button onclick="closeCanvas()" class="text-gray-400 hover:text-white px-2 text-sm">Yopish</button>
+    <header class="glass h-20 flex items-center justify-between px-6 border-b border-gray-200/50 dark:border-premiumBorder sticky top-0 z-40">
+      <div class="flex items-center gap-4">
+        <span id="quizIdentityBadge" class="bg-accentBlue/10 border border-accentBlue/30 text-accentBlue font-mono font-black text-xs px-4 py-1.5 rounded-xl">KOD</span>
+        <span id="quizQuestionProgressLabel" class="text-xs font-black uppercase tracking-wider text-gray-400">Savol: 1 / 10</span>
+        <span id="quizFullscreenWarningBadge" class="bg-accentRose/10 border border-accentRose/30 text-accentRose font-bold text-xs px-3 py-1.5 rounded-xl animate-pulse">Xavfsizlik: 0 / 3</span>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <div id="quizDigitalTimerClock" class="font-mono text-2xl font-black text-accentBlue bg-accentBlue/5 px-5 py-2 rounded-xl border border-accentBlue/20 animate-pulse">00:00</div>
+        <button onclick="manuallyAttemptQuizTermination()" class="bg-accentRose/15 text-accentRose border border-accentRose/30 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-accentRose hover:text-white transition-all">Yakunlash</button>
+      </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 py-8 flex flex-col justify-center items-center">
+      <div class="w-full glass rounded-[2.5rem] p-6 md:p-10 shadow-premium border border-gray-200/40 dark:border-premiumBorder/40">
+        
+        <div id="quizQuestionImageWrapper" class="hidden mb-6 flex justify-center transform hover:scale-[1.02] transition-all">
+          <img id="quizQuestionImage" src="" alt="Savol Rasmi" class="max-h-72 object-contain rounded-2xl border border-gray-200 dark:border-premiumBorder shadow-md">
+        </div>
+
+        <div id="quizQuestionTextContainer" class="mb-8 border-b border-gray-200 dark:border-premiumBorder pb-6">
+          <h3 id="quizQuestionText" class="text-xl md:text-2xl font-semibold leading-relaxed tracking-tight break-words font-serif">Yuklanmoqda...</h3>
+        </div>
+
+        <div id="quizOptionsStack" class="flex flex-col gap-3.5 w-full"></div>
+
+        <div class="flex justify-between items-center mt-10 pt-6 border-t border-gray-200 dark:border-premiumBorder gap-4">
+          <button id="quizPrevBtn" onclick="quizNavigatePrevious()" class="px-6 py-3.5 rounded-xl border border-gray-200 dark:border-premiumBorder text-sm font-bold hover:bg-gray-100 dark:hover:bg-premiumDark transition-all disabled:opacity-20">
+            <i class="fa-solid fa-chevron-left mr-2"></i> Ortga
+          </button>
+          
+          <button onclick="toggleScratchCanvasModal()" class="px-5 py-3.5 bg-gray-500/10 text-accentCyan border border-accentCyan/20 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-accentCyan/10 transition-all">
+            <i class="fa-solid fa-pen-nib mr-2"></i> Qoralama Dosgasi
+          </button>
+          
+          <button id="quizNextBtn" onclick="quizNavigateNext()" class="px-6 py-3.5 bg-accentBlue text-white rounded-xl text-sm font-bold shadow-glowBlue hover:bg-blue-600 transition-all">
+            Keyingi <i class="fa-solid fa-chevron-right ml-2"></i>
+          </button>
         </div>
       </div>
-      <canvas id="scratchCanvas" class="flex-grow bg-premiumDark border border-premiumBorder rounded-xl cursor-crosshair touch-none"></canvas>
+
+      <div id="quizQuestionsPalette" class="mt-8 glass rounded-2xl p-4 flex flex-wrap gap-2 justify-center w-full"></div>
+    </main>
+  </div>
+
+  <div id="scratchCanvasModal" class="fixed inset-0 z-[60] bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-premiumCard w-full max-w-4xl h-[650px] rounded-[2.5rem] p-5 flex flex-col border border-gray-200 dark:border-premiumBorder shadow-premium">
+      <div class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-premiumBorder pb-3">
+        <span class="font-black uppercase tracking-wider text-sm"><i class="fa-solid fa-signature text-accentBlue mr-2"></i> Grafik Qoralama / Formula maydoni</span>
+        <div class="flex items-center gap-3">
+          <select id="canvasToolSelector" onchange="updateCanvasPenStyle()" class="bg-gray-500/5 text-xs font-bold rounded-xl px-4 py-2.5 border border-gray-200 dark:border-premiumBorder outline-none">
+            <option value="draw">🖊️ Nozik Qalam</option>
+            <option value="erase">🧼 O'chirish Rejimi</option>
+          </select>
+          <button onclick="clearScratchCanvas()" class="text-xs font-bold bg-accentRose/10 text-accentRose px-4 py-2.5 rounded-xl border border-accentRose/20 hover:bg-accentRose hover:text-white transition-all">Ekranni Tozalash</button>
+          <button onclick="toggleScratchCanvasModal()" class="text-gray-400 hover:text-white p-2 text-xl"><i class="fa-solid fa-circle-xmark"></i></button>
+        </div>
+      </div>
+      <canvas id="scratchpadCoreCanvas" class="flex-grow bg-gray-50 dark:bg-premiumDark/80 border border-gray-200 dark:border-premiumBorder rounded-2xl cursor-crosshair touch-none"></canvas>
     </div>
   </div>
 
   <script>
-    const THEME_KEY = 'mathpro_theme_v2';
-    // XAVFSIZ ADMIN PAROLI (Hech qachon frontendga faqat pass tekshirish qo'yilmaydi, buni xavfsiz backend integratsiyasi uchun o'zgartirasiz)
-    const REAL_ADMIN_ID = 'PRO_ADMIN_777'; 
+    // Maxfiy kalit va ma'lumotlar ombori kalitlari
+    const SECURE_ADMIN_PASSCODE = '0890';
+    
+    // LocalStorage ma'lumotlarini yuklash
+    let appState = JSON.parse(localStorage.getItem('mp_state')) || { currentUser: null };
+    let dbCategories = JSON.parse(localStorage.getItem('mp_cats')) || [
+      { id: 'cat_math', name: 'Oliy Matematika', icon: 'fa-calculator' },
+      { id: 'cat_logic', name: 'Mantiqiy Fikrlar', icon: 'fa-flask' }
+    ];
+    let dbTests = JSON.parse(localStorage.getItem('mp_tests')) || [
+      {
+        id: 'M-101',
+        title: 'Premium Matematika Kirish Testi',
+        categoryId: 'cat_math',
+        qCount: 2,
+        time: 15,
+        questions: [
+          { q: 'Hisoblang: $\\int_0^3 2x \\, dx$', options: ['6', '9', '12', '4'], correct: 1, image: null },
+          { q: 'Agar $3^x = 81$ bo\'lsa, $x^2$ ifoda qiymatini hisoblang.', options: ['9', '8', '16', '25'], correct: 2, image: null }
+        ]
+      }
+    ];
+    let dbResults = JSON.parse(localStorage.getItem('mp_results')) || [];
 
-    let state = {
-      currentUser: null,
-      categories: [
-        { id: 'cat_math', name: 'Oliy Matematika', icon: 'fa-calculator' },
-        { id: 'cat_physics', name: 'Kvant Fizikasi', icon: 'fa-flask' }
-      ],
-      tests: [
-        {
-          id: 'TEST-101',
-          title: 'Matematik Analiz va Integrallar',
-          categoryId: 'cat_math',
-          time: 15,
-          questions: [
-            { q: 'Hisoblang: $\\int_0^2 3x^2 dx$', options: ['6', '8', '12', '4'], correct: 1, weight: 5 },
-            { q: 'Agar $log_2(x) = 4$ bo\'lsa, $x^2$ qiymatini toping.', options: ['16', '64', '256', '512'], correct: 2, weight: 3 },
-            { q: 'Hosila hisoblang: $(e^{2x})\'$', options: ['e^{2x}', '2e^{2x}', '2x e^{2x-1}', 'e^x'], correct: 1, weight: 4 }
-          ]
-        }
-      ],
-      results: []
-    };
+    // Global Ishchi O'zgaruvchilar
+    let activeTab = 'homeTab';
+    let currentCategoryFilter = 'all';
+    let activeQuizData = null;
+    let quizCurrentQuestionIndex = 0;
+    let quizUserAnswers = [];
+    let quizTimerInterval = null;
+    let quizTimeLeftSeconds = 0;
+    let quizTotalTimeSeconds = 0;
+    let quizFullscreenExitsCount = 0;
 
-    // LOCAL STORAGE SYNC
-    function loadData() {
-      if(localStorage.getItem('mathpro_cats')) state.categories = JSON.parse(localStorage.getItem('mathpro_cats'));
-      if(localStorage.getItem('mathpro_tests')) state.tests = JSON.parse(localStorage.getItem('mathpro_tests'));
-      if(localStorage.getItem('mathpro_results')) state.results = JSON.parse(localStorage.getItem('mathpro_results'));
+    // Matematik matnlarni va ^2 ko'rinishlarni MathJax inline ko'rinishga moslashtirish (Auto-Format Helper)
+    function autoFormatFormulaSyntax(rawText) {
+      if (!rawText) return '';
+      // Agar foydalanuvchi $ belgisini qo'ymagan bo'lsa lekin ^ belgisi bo'lsa, uni inline tegga aylantirishga yordam beradi
+      let formatted = rawText;
+      // Agar matnda oddiygina 2^2 yoki x^2 bo'lsa va $ ichida bo'lmasa uni $ bilan o'raymiz
+      const simplePowerRegex = /(\b[a-zA-Z0-9_]+\^[a-zA-Z0-9_]+)/g;
+      if (!formatted.includes('$')) {
+        formatted = formatted.replace(simplePowerRegex, '$$1$');
+      }
+      return formatted;
     }
-    function syncStorage() {
-      localStorage.setItem('mathpro_cats', JSON.stringify(state.categories));
-      localStorage.setItem('mathpro_tests', JSON.stringify(state.tests));
-      localStorage.setItem('mathpro_results', JSON.stringify(state.results));
+
+    // Har safar savol yuklanganda MathJax ni ishga tushirish
+    function enforceMathJaxTypeset() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        setTimeout(() => {
+          window.MathJax.typesetPromise().catch((err) => console.log(err));
+        }, 40);
+      }
     }
 
-    // SYSTEM TOASTS
+    // Dynamic fon zarrachalari generatori (Premium vizual effekt)
+    function generateAmbientFloatingParticles() {
+      const colors = ['bg-accentBlue', 'bg-accentCyan', 'bg-accentViolet', 'bg-accentEmerald'];
+      for (let i = 0; i < 15; i++) {
+        let p = document.createElement('div');
+        let size = Math.random() * 6 + 4;
+        let color = colors[Math.floor(Math.random() * colors.length)];
+        p.className = `particle ${color} rounded-full opacity-20`;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.top = (Math.random() * 80 + 20) + 'vh';
+        p.style.animationDelay = (Math.random() * 5) + 's';
+        p.style.animationDuration = (Math.random() * 6 + 6) + 's';
+        document.body.appendChild(p);
+      }
+    }
+
+    // Bildirishnoma (Toast) tizimi
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      const color = type === 'success' ? 'bg-accentEmerald border-emerald-500' : (type === 'error' ? 'bg-accentRose border-red-500' : 'bg-accentBlue border-blue-500');
-      toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border text-white font-medium text-xs pointer-events-auto transition-all transform duration-300 translate-x-20 opacity-0 ${color}`;
-      toast.innerHTML = `<i class="fa-solid fa-bell text-sm"></i> <span>${msg}</span>`;
+      const bg = type === 'success' ? 'bg-accentEmerald border-emerald-500' : (type === 'error' ? 'bg-accentRose border-red-500' : 'bg-accentBlue border-blue-500');
+      const icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info');
+      
+      toast.className = `flex items-center gap-3 px-4 py-3.5 rounded-xl border text-white font-semibold text-xs shadow-lg transform transition-all duration-300 translate-x-20 opacity-0 ${bg} pointer-events-auto`;
+      toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span>${msg}</span>`;
       container.appendChild(toast);
+      
       setTimeout(() => { toast.classList.remove('translate-x-20', 'opacity-0'); }, 10);
       setTimeout(() => {
         toast.classList.add('translate-x-20', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
+        setTimeout(() => { toast.remove(); }, 300);
+      }, 4000);
     }
 
-    // AUTH LOGIN SYSTEM
-    function loginSystem() {
-      const fullname = document.getElementById('authFullname').value.trim();
-      const studentId = document.getElementById('authStudentID').value.trim();
-      if(!fullname || !studentId) return showToast('Ma\'lumotlarni to\'liq kiriting!', 'error');
+    // LocalStorage saqlash markazi
+    function commitDataToStorage() {
+      localStorage.setItem('mp_state', JSON.stringify(appState));
+      localStorage.setItem('mp_cats', JSON.stringify(dbCategories));
+      localStorage.setItem('mp_tests', JSON.stringify(dbTests));
+      localStorage.setItem('mp_results', JSON.stringify(dbResults));
+    }
 
-      if(studentId === REAL_ADMIN_ID) {
-        state.currentUser = { name: fullname, id: studentId, role: 'admin' };
-      } else {
-        state.currentUser = { name: fullname, id: studentId, role: 'student' };
-      }
-
-      document.getElementById('authModal').classList.add('hidden');
-      document.getElementById('mainAppView').classList.remove('hidden');
+    // Sahifa yuklanganda ishga tushadigan dastlabki yuklagich
+    window.addEventListener('DOMContentLoaded', () => {
+      generateAmbientFloatingParticles();
       
-      document.getElementById('displayUserName').innerText = state.currentUser.name;
-      document.getElementById('displayUserRole').innerText = state.currentUser.role === 'admin' ? 'Bosh Admin' : 'O\'quvchi';
-
-      buildAdminInterfaceIfNecessary();
-      renderHome();
-      renderResults();
-      showToast(`Hush kelibsiz, ${state.currentUser.name}`);
-    }
-
-    function logoutSystem() {
-      state.currentUser = null;
-      document.getElementById('authModal').classList.remove('hidden');
-      document.getElementById('mainAppView').classList.add('hidden');
-      // Admin elementlarini tozalash
-      document.getElementById('dynamicTabsContainer').innerHTML = `
-        <button onclick="switchTab('homeTab')" id="btn-homeTab" class="px-5 py-3 text-sm font-bold transition-all whitespace-nowrap tab-active"><i class="fa-solid fa-cubes mr-1.5"></i> Fanlar va Testlar</button>
-        <button onclick="switchTab('resultsTab')" id="btn-resultsTab" class="px-5 py-3 text-sm font-bold text-gray-400 transition-all whitespace-nowrap"><i class="fa-solid fa-chart-line mr-1.5"></i> Natijalarim</button>
-      `;
-      document.getElementById('adminTabWrapper').innerHTML = '';
-    }
-
-    // SECURITY: ADMIN PANEL GENERATION (Faqat admin kirganda yuklanadi)
-    function buildAdminInterfaceIfNecessary() {
-      if(state.currentUser.role !== 'admin') return;
-
-      // 1. Tab qo'shish
-      const tabsContainer = document.getElementById('dynamicTabsContainer');
-      const adminTabBtn = document.createElement('button');
-      adminTabBtn.id = 'btn-adminTab';
-      adminTabBtn.onclick = () => switchTab('adminTab');
-      adminTabBtn.className = 'px-5 py-3 text-sm font-bold text-accentRose transition-all whitespace-nowrap';
-      adminTabBtn.innerHTML = `<i class="fa-solid fa-lock-open mr-1.5"></i> Admin Boshqaruv`;
-      tabsContainer.appendChild(adminTabBtn);
-
-      // 2. Kontent qismini JS orqali xavfsiz render qilish
-      const wrapper = document.getElementById('adminTabWrapper');
-      wrapper.innerHTML = `
-        <div id="adminTab" class="tab-content hidden space-y-6">
-          <div class="panel rounded-2xl p-6 border-accentRose/30 bg-gradient-to-r from-accentRose/5 to-transparent">
-            <h2 class="text-xl font-bold text-accentRose"><i class="fa-solid fa-shield-halved mr-1"></i> Himoyalangan Admin Paneli</h2>
-            <p class="text-xs text-gray-400 mt-0.5">Yangi testlar yaratish va tizim ma'lumotlarini tahrirlash.</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="panel rounded-2xl p-5 space-y-4 md:col-span-1">
-              <h3 class="font-bold text-xs uppercase text-accentBlue">Yangi Kategoriya</h3>
-              <input type="text" id="admCatName" placeholder="Kategoriya Nomi" class="w-full bg-premiumDark border border-premiumBorder rounded-xl p-3 text-xs text-white outline-none">
-              <button onclick="adminAddCategory()" class="w-full bg-accentBlue text-white font-bold py-2.5 rounded-xl text-xs">Yaratish</button>
-            </div>
-
-            <div class="panel rounded-2xl p-5 space-y-4 md:col-span-2">
-              <h3 class="font-bold text-xs uppercase text-accentCyan">Yangi Test Qo'shish</h3>
-              <div class="grid grid-cols-2 gap-3">
-                <input type="text" id="admTestTitle" placeholder="Test Nomi" class="w-full bg-premiumDark border border-premiumBorder rounded-xl p-3 text-xs text-white outline-none">
-                <select id="admTestCatSelect" class="w-full bg-premiumDark border border-premiumBorder rounded-xl p-3 text-xs text-white outline-none"></select>
-                <input type="number" id="admTestTime" placeholder="Vaqt (Daqiqa)" class="w-full bg-premiumDark border border-premiumBorder rounded-xl p-3 text-xs text-white outline-none">
-                <input type="text" id="admTestId" placeholder="Unikal Test KODI (Masalan: M-01)" class="w-full bg-premiumDark border border-premiumBorder rounded-xl p-3 text-xs font-mono text-white outline-none">
-              </div>
-
-              <div class="border border-premiumBorder p-4 rounded-xl space-y-3 bg-premiumDark/40">
-                <div class="flex justify-between items-center">
-                  <span class="text-xs font-bold text-gray-400">SAVOLLAR RO'YXATI</span>
-                  <button onclick="adminAddQuestionRow()" class="bg-accentCyan/10 text-accentCyan border border-accentCyan/20 px-3 py-1 rounded-lg text-xs font-bold">+ Savol Qo'shish</button>
-                </div>
-                <div id="admQuestionsContainer" class="space-y-4 max-h-60 overflow-y-auto pr-1"></div>
-              </div>
-
-              <button onclick="adminSaveTest()" class="w-full bg-accentEmerald text-white font-bold py-3 rounded-xl text-xs shadow-md">Testni Tizimga Saqlash</button>
-            </div>
-          </div>
-        </div>
-      `;
-      updateAdminCategorySelect();
-    }
-
-    function updateAdminCategorySelect() {
-      const select = document.getElementById('admTestCatSelect');
-      if(select) {
-        select.innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      }
-    }
-
-    function adminAddCategory() {
-      const name = document.getElementById('admCatName').value.trim();
-      if(!name) return showToast('Nom kiriting', 'error');
-      const id = 'cat_' + Date.now();
-      state.categories.push({ id, name, icon: 'fa-book' });
-      syncStorage();
-      updateAdminCategorySelect();
-      renderHome();
-      document.getElementById('admCatName').value = '';
-      showToast('Kategoriya saqlandi!');
-    }
-
-    let adminQuestionCount = 0;
-    function adminAddQuestionRow() {
-      adminQuestionCount++;
-      const container = document.getElementById('admQuestionsContainer');
-      const row = document.createElement('div');
-      row.className = 'p-3 bg-premiumDark border border-premiumBorder rounded-xl space-y-2 relative';
-      row.innerHTML = `
-        <div class="flex justify-between items-center text-[10px] text-gray-400 font-bold">
-          <span>SAVOL #${adminQuestionCount}</span>
-          <div class="flex items-center gap-1">
-            <span>Ball (Vazni):</span>
-            <input type="number" class="w-12 bg-premiumCard border border-premiumBorder text-center rounded text-accentAmber q-weight" value="2" step="0.1">
-          </div>
-        </div>
-        <textarea placeholder="Savol matni (MathJax formulalari $...$ bilan)" class="w-full bg-premiumCard border border-premiumBorder rounded-lg p-2 text-xs text-white outline-none h-14 q-text"></textarea>
-        <div class="grid grid-cols-2 gap-2">
-          <input type="text" placeholder="Variant A" class="w-full bg-premiumCard border border-premiumBorder rounded-lg p-2 text-xs text-white outline-none q-opt">
-          <input type="text" placeholder="Variant B" class="w-full bg-premiumCard border border-premiumBorder rounded-lg p-2 text-xs text-white outline-none q-opt">
-          <input type="text" placeholder="Variant C" class="w-full bg-premiumCard border border-premiumBorder rounded-lg p-2 text-xs text-white outline-none q-opt">
-          <input type="text" placeholder="Variant D" class="w-full bg-premiumCard border border-premiumBorder rounded-lg p-2 text-xs text-white outline-none q-opt">
-        </div>
-        <div>
-          <label class="text-[10px] text-gray-400 font-bold mr-2">To'g'ri javob:</label>
-          <select class="bg-premiumCard border border-premiumBorder text-xs rounded p-1 text-accentEmerald q-correct">
-            <option value="0">A</option>
-            <option value="1">B</option>
-            <option value="2">C</option>
-            <option value="3">D</option>
-          </select>
-        </div>
-      `;
-      container.appendChild(row);
-    }
-
-    function adminSaveTest() {
-      const title = document.getElementById('admTestTitle').value.trim();
-      const catId = document.getElementById('admTestCatSelect').value;
-      const time = parseInt(document.getElementById('admTestTime').value);
-      const testId = document.getElementById('admTestId').value.trim().toUpperCase();
-
-      if(!title || !time || !testId) return showToast('Test sarlavha va vaqtini kiriting!', 'error');
-
-      const rows = document.querySelectorAll('#admQuestionsContainer > div');
-      const questions = [];
-
-      rows.forEach(row => {
-        const qText = row.querySelector('.q-text').value.trim();
-        const weight = parseFloat(row.querySelector('.q-weight').value) || 2;
-        const optInputs = row.querySelectorAll('.q-opt');
-        const correct = parseInt(row.querySelector('.q-correct').value);
-
-        const options = [];
-        optInputs.forEach(i => { if(i.value.trim()) options.push(i.value.trim()); });
-
-        if(qText && options.length === 4) {
-          questions.push({ q: qText, options, correct, weight });
+      // Telegram WebApp orqali kirganligini tekshirish
+      if (window.Telegram && window.Telegram.WebApp) {
+        const tgApp = window.Telegram.WebApp;
+        tgApp.ready();
+        tgApp.expand();
+        if (tgApp.initDataUnsafe && tgApp.initDataUnsafe.user) {
+          const tgUser = tgApp.initDataUnsafe.user;
+          appState.currentUser = {
+            name: `${tgUser.first_name || ''} ${tgUser.last_name || ''}`.trim() || tgUser.username || 'Telegram Foydalanuvchisi',
+            id: tgUser.id.toString(),
+            role: (tgUser.username && tgUser.username.toLowerCase() === 'admin') ? 'admin' : 'student'
+          };
+          commitDataToStorage();
+          showToast(`Telegram orqali muvaffaqiyatli kirildi: ${appState.currentUser.name}`);
         }
-      });
+      }
 
-      if(questions.length === 0) return showToast('Kamida 1 ta to\'liq savol kiriting!', 'error');
-
-      state.tests.push({ id: testId, title, categoryId: catId, time, questions });
-      syncStorage();
-      renderHome();
-      
-      // Formani tozalash
-      document.getElementById('admTestTitle').value = '';
-      document.getElementById('admTestTime').value = '';
-      document.getElementById('admTestId').value = '';
-      document.getElementById('admQuestionsContainer').innerHTML = '';
-      adminQuestionCount = 0;
-      showToast('Yangi premium test muvaffaqiyatli yuklandi!');
-    }
-
-    // TAB SWITCHER
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
-
-      document.querySelectorAll('#dynamicTabsContainer button').forEach(b => b.classList.remove('tab-active'));
-      const activeBtn = document.getElementById(`btn-${tabId}`);
-      if(activeBtn) activeBtn.classList.add('tab-active');
-    }
-
-    // RENDER INTERFACE (HOME)
-    function renderHome() {
-      const grid = document.getElementById('testsGrid');
-      const search = document.getElementById('searchTestInput').value.toLowerCase();
-      
-      // Chiroyli skeleton loader effekti
-      grid.innerHTML = Array(3).fill(0).map(() => `
-        <div class="panel rounded-2xl p-5 space-y-3 overflow-hidden relative">
-          <div class="h-4 w-1/3 bg-premiumBorder shimmer rounded"></div>
-          <div class="h-6 w-3/4 bg-premiumBorder shimmer rounded"></div>
-          <div class="h-10 bg-premiumBorder shimmer rounded-xl"></div>
-        </div>
-      `).join('');
-
-      setTimeout(() => {
-        const filtered = state.tests.filter(t => t.title.toLowerCase().includes(search) || t.id.toLowerCase().includes(search));
-        if(filtered.length === 0) {
-          grid.innerHTML = `<div class="p-4 text-xs text-gray-400">Hech qanday test topilmadi.</div>`;
-          return;
-        }
-
-        grid.innerHTML = filtered.map(t => {
-          const cat = state.categories.find(c => c.id === t.categoryId)?.name || 'Umumiy';
-          const totalPoints = t.questions.reduce((sum, q) => sum + (q.weight || 2), 0);
-          return `
-            <div class="panel rounded-2xl p-5 flex flex-col justify-between border border-premiumBorder hover:border-accentBlue/40 transition-all">
-              <div>
-                <div class="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  <span>${cat}</span>
-                  <span class="font-mono text-accentCyan">${t.id}</span>
-                </div>
-                <h4 class="text-md font-bold tracking-tight text-white mb-3">${t.title}</h4>
-                <div class="flex gap-3 text-xs text-gray-400 mb-4">
-                  <span><i class="fa-regular fa-clock mr-1 text-accentBlue"></i> ${t.time} daqiqa</span>
-                  <span><i class="fa-solid fa-layer-group mr-1 text-accentEmerald"></i> ${t.questions.length} ta savol</span>
-                </div>
-                <div class="text-[11px] bg-premiumDark p-2 rounded-lg text-accentAmber font-mono mb-4">
-                  Maksimal ball: ${totalPoints.toFixed(1)}
-                </div>
-              </div>
-              <button onclick="startQuiz('${t.id}')" class="w-full bg-accentBlue/10 hover:bg-accentBlue text-accentBlue hover:text-white transition-all font-bold py-2.5 rounded-xl text-xs border border-accentBlue/20">
-                Testni Boshlash
-              </button>
-            </div>
-          `;
-        }).join('');
-        triggerMathRender();
-      }, 300);
-
-      // Render Leaderboard
-      const leaderboard = document.getElementById('leaderboardList');
-      if(state.results.length === 0) {
-        leaderboard.innerHTML = `<div class="text-[11px] text-gray-500">Hozircha reyting mavjud emas.</div>`;
+      if (appState.currentUser) {
+        bootApplicationView();
       } else {
-        const top = [...state.results].sort((a,b) => b.score - a.score).slice(0, 5);
-        leaderboard.innerHTML = top.map((r, i) => `
-          <div class="flex items-center justify-between p-2 bg-premiumDark/50 rounded-xl text-xs">
-            <div class="flex items-center gap-2">
-              <span class="font-mono font-bold text-accentAmber">#${i+1}</span>
-              <span class="font-medium text-gray-200 truncate max-w-[120px]">${r.userName}</span>
-            </div>
-            <span class="font-mono font-bold text-accentEmerald">${r.score.toFixed(1)} ball</span>
-          </div>
-        `).join('');
+        document.getElementById('authModal').classList.remove('hidden');
+      }
+    });
+
+    // Admin paroli maydonini dinamik tekshirish
+    function checkAdminRoleTrigger(val) {
+      const wrapper = document.getElementById('adminPasswordWrapper');
+      if (val === '0890' || val.toLowerCase() === 'admin') {
+        wrapper.classList.remove('hidden');
+        setTimeout(() => { wrapper.classList.remove('opacity-0', 'scale-95'); }, 10);
+      } else {
+        wrapper.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
       }
     }
 
-    // RENDER USER RESULTS
-    function renderResults() {
-      const table = document.getElementById('myResultsTable');
-      const myRes = state.results.filter(r => r.userId === state.currentUser?.id);
+    // Qo'lda (Manual) Tizimga Kirish
+    function loginSystemManual() {
+      const name = document.getElementById('authFullname').value.trim();
+      const idStr = document.getElementById('authStudentID').value.trim();
+      const adminPass = document.getElementById('authAdminPassword').value;
 
-      if(myRes.length === 0) {
-        table.innerHTML = `<tr><td colspan="5" class="p-4 text-xs text-center text-gray-500">Sizda hali natijalar mavjud emas.</td></tr>`;
+      if (!name || !idStr) {
+        showToast('Iltimos, barcha maydonlarni to\'ldiring!', 'error');
         return;
       }
 
-      table.innerHTML = myRes.map(r => `
-        <tr class="hover:bg-premiumDark/30 transition-colors">
-          <td class="p-4 text-xs font-mono text-gray-400">${r.date}</td>
-          <td class="p-4 text-xs font-bold text-white">${r.testTitle}</td>
-          <td class="p-4 text-xs font-mono">${r.correct} / ${r.totalQuestions}</td>
-          <td class="p-4 text-xs font-mono text-accentEmerald font-bold">${r.score.toFixed(1)}</td>
-          <td class="p-4 text-xs">
-            <button onclick="viewReview('${r.id}')" class="bg-accentBlue/10 text-accentBlue border border-accentBlue/20 px-3 py-1 rounded-lg hover:bg-accentBlue hover:text-white transition-all">Tahlil</button>
-          </td>
-        </tr>
-      `).join('');
+      let assignedRole = 'student';
+      if (idStr === '0890' && adminPass === SECURE_ADMIN_PASSCODE) {
+        assignedRole = 'admin';
+        showToast('Adminlik huquqi tasdiqlandi!', 'success');
+      }
+
+      appState.currentUser = { name: name, id: idStr, role: assignedRole };
+      commitDataToStorage();
+      
+      document.getElementById('authModal').classList.add('hidden');
+      bootApplicationView();
     }
 
-    // QUIZ ENGINE ENGINE LOGIC
-    let quiz = {
-      activeData: null,
-      currentIndex: 0,
-      userAnswers: [],
-      timer: null,
-      timeLeft: 0,
-      cheats: 0
-    };
+    // Ilovani Ishga Tushirish va UI ni yangilash
+    function bootApplicationView() {
+      document.getElementById('authModal').classList.add('hidden');
+      document.getElementById('mainAppView').classList.remove('hidden');
 
-    function startQuiz(testId) {
-      const test = state.tests.find(t => t.id === testId);
-      if(!test) return;
+      document.getElementById('displayUserName').innerText = appState.currentUser.name;
+      document.getElementById('displayUserRole').innerText = appState.currentUser.role === 'admin' ? 'Bosh Admin' : 'O\'quvchi';
 
-      quiz.activeData = test;
-      quiz.currentIndex = 0;
-      quiz.userAnswers = Array(test.questions.length).fill(null);
-      quiz.timeLeft = test.time * 60;
-      quiz.cheats = 0;
+      // Admin bo'lsa tugmani mutlaqo ko'rinadigan qilish, aks holda yashirish
+      const adminBtn = document.getElementById('btn-adminTab');
+      if (appState.currentUser.role === 'admin') {
+        adminBtn.classList.remove('hidden');
+      } else {
+        adminBtn.classList.add('hidden');
+      }
+
+      calculateGlobalMetrics();
+      renderHomeCategories();
+      renderHomeTestsGrid();
+      renderGlobalLeaderboard();
+      renderPersonalResultsArchive();
+      rebuildAdminControlPanels();
+    }
+
+    // Global statistika hisob-kitoblari
+    function calculateGlobalMetrics() {
+      document.getElementById('globalStatTests').innerText = dbTests.length;
+      document.getElementById('globalStatCats').innerText = dbCategories.length;
+      document.getElementById('globalStatAttempts').innerText = dbResults.length;
+    }
+
+    // Tablararo o'tish boshqaruvi
+    function switchTabPanel(targetTab) {
+      activeTab = targetTab;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(targetTab).classList.remove('hidden');
+
+      document.querySelectorAll('[id^="btn-"]').forEach(btn => btn.classList.remove('tab-active'));
+      document.getElementById('btn-' + targetTab).classList.add('tab-active');
+      
+      if (targetTab === 'resultsTab') renderPersonalResultsArchive();
+      if (targetTab === 'homeTab') { renderHomeTestsGrid(); calculateGlobalMetrics(); }
+    }
+
+    // Theme o'zgartirgich (Dark / Light)
+    function toggleThemeMode() {
+      const html = document.documentElement;
+      const icon = document.getElementById('themeIcon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        html.setAttribute('data-theme', 'light');
+        icon.className = 'fa-solid fa-sun text-lg text-amber-500';
+      } else {
+        html.classList.add('dark');
+        html.setAttribute('data-theme', 'dark');
+        icon.className = 'fa-solid fa-moon text-lg';
+      }
+    }
+
+    // Tizimdan Chiqish
+    function logoutSystem() {
+      appState.currentUser = null;
+      localStorage.removeItem('mp_state');
+      location.reload();
+    }
+
+    // ================= HOME PANELI FUNKSIYALARI =================
+    function renderHomeCategories() {
+      const container = document.getElementById('homeCategoriesContainer');
+      container.innerHTML = `<button onclick="filterHomeByCategory('all')" id="catFilter-all" class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl border transition-all ${currentCategoryFilter === 'all' ? 'bg-accentBlue text-white border-accentBlue shadow-glowBlue' : 'glass text-gray-400 border-gray-200/50 dark:border-premiumBorder'}">Barchasi</button>`;
+      
+      dbCategories.forEach(cat => {
+        const isSel = currentCategoryFilter === cat.id;
+        container.innerHTML += `<button onclick="filterHomeByCategory('${cat.id}')" id="catFilter-${cat.id}" class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl border transition-all ${isSel ? 'bg-accentBlue text-white border-accentBlue shadow-glowBlue' : 'glass text-gray-400 border-gray-200/50 dark:border-premiumBorder'}"><i class="fa-solid ${cat.icon} mr-1.5"></i> ${cat.name}</button>`;
+      });
+    }
+
+    function filterHomeByCategory(catId) {
+      currentCategoryFilter = catId;
+      renderHomeCategories();
+      renderHomeTestsGrid();
+    }
+
+    function performHomeSearch(query) {
+      renderHomeTestsGrid(query.toLowerCase().trim());
+    }
+
+    function renderHomeTestsGrid(searchKeyword = '') {
+      const grid = document.getElementById('homeTestsGrid');
+      grid.innerHTML = '';
+
+      let filtered = dbTests;
+      if (currentCategoryFilter !== 'all') {
+        filtered = filtered.filter(t => t.categoryId === currentCategoryFilter);
+      }
+      if (searchKeyword) {
+        filtered = filtered.filter(t => t.title.toLowerCase().includes(searchKeyword) || t.id.toLowerCase().includes(searchKeyword));
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 text-sm font-medium"><i class="fa-solid fa-box-open block text-3xl mb-2 text-gray-600"></i> Qidiruv bo'yicha hech qanday imtihon topilmadi.</div>`;
+        return;
+      }
+
+      filtered.forEach(test => {
+        const cat = dbCategories.find(c => c.id === test.categoryId) || { name: 'Boshqa', icon: 'fa-folder' };
+        grid.innerHTML += `
+          <div class="panel rounded-2xl p-5 space-y-4 hover:border-accentBlue/40 transition-all transform hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start gap-2">
+                <span class="text-[10px] font-mono font-bold px-2 py-1 bg-gray-500/10 rounded-lg text-accentCyan">${test.id}</span>
+                <span class="text-[10px] font-bold text-gray-400 flex items-center gap-1"><i class="fa-solid ${cat.icon}"></i> ${cat.name}</span>
+              </div>
+              <h4 class="text-base font-extrabold tracking-tight mt-3 text-gray-900 dark:text-white line-clamp-2">${test.title}</h4>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-200 dark:border-premiumBorder flex justify-between items-center text-xs text-gray-400 font-medium">
+              <span><i class="fa-solid fa-circle-question mr-1 text-accentBlue"></i> ${test.questions.length} ta savol</span>
+              <span><i class="fa-solid fa-clock mr-1 text-accentAmber"></i> ${test.time} daqiqa</span>
+            </div>
+
+            <button onclick="bootQuizProcess('${test.id}')" class="w-full mt-2 bg-gray-500/5 hover:bg-accentBlue hover:text-white border border-gray-200 dark:border-premiumBorder hover:border-accentBlue py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all">
+              Imtihonni Boshlash
+            </button>
+          </div>
+        `;
+      });
+    }
+
+    function renderGlobalLeaderboard() {
+      const container = document.getElementById('leaderboardContainer');
+      container.innerHTML = '';
+
+      // Talabalar natijalarini jamlash va saralash
+      let map = {};
+      dbResults.forEach(r => {
+        if (!map[r.studentId] || map[r.studentId].score < r.score) {
+          map[r.studentId] = r;
+        }
+      });
+
+      let leaders = Object.values(map).sort((a, b) => b.percent - a.percent || b.score - a.score).slice(0, 10);
+
+      if (leaders.length === 0) {
+        container.innerHTML = '<div class="text-center py-4 text-xs text-gray-400 font-medium">Hozircha peshqadamlar mavjud emas.</div>';
+        return;
+      }
+
+      leaders.forEach((l, idx) => {
+        const medal = idx === 0 ? 'text-amber-400' : (idx === 1 ? 'text-slate-300' : (idx === 2 ? 'text-amber-600' : 'text-gray-500'));
+        container.innerHTML += `
+          <div class="flex items-center justify-between p-2.5 glass rounded-xl text-xs">
+            <div class="flex items-center gap-2">
+              <span class="font-black w-5 text-center ${medal}">${idx + 1}</span>
+              <span class="font-bold truncate max-w-[130px]">${l.studentName}</span>
+            </div>
+            <span class="font-mono font-bold bg-accentBlue/10 text-accentBlue px-2 py-0.5 rounded-lg">${l.percent}%</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderPersonalResultsArchive() {
+      const body = document.getElementById('personalResultsTableBody');
+      body.innerHTML = '';
+
+      let mine = dbResults.filter(r => r.studentId === appState.currentUser.id);
+      if (mine.length === 0) {
+        body.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-xs text-gray-400">Siz hali imtihon topshirmadingiz.</td></tr>';
+        return;
+      }
+
+      mine.reverse().forEach(r => {
+        const statusCls = r.percent >= 60 ? 'bg-accentEmerald/10 text-accentEmerald' : 'bg-accentRose/10 text-accentRose';
+        const statusTxt = r.percent >= 60 ? 'O\'tdi' : 'Yiqildi';
+        body.innerHTML += `
+          <tr class="hover:bg-gray-500/5">
+            <td class="p-4 text-xs text-gray-400 font-mono">${r.date}</td>
+            <td class="p-4 text-sm font-extrabold">${r.testTitle}</td>
+            <td class="p-4 text-xs font-mono">${r.score} / ${r.totalQ}</td>
+            <td class="p-4 font-mono font-bold text-accentBlue">${r.percent}%</td>
+            <td class="p-4"><span class="px-2.5 py-1 text-[10px] font-bold rounded-lg ${statusCls}">${statusTxt}</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    // ================= QUIZ PROCESS (ANTI-CHEAT & FULLSCREEN) =================
+    function bootQuizProcess(testId) {
+      const test = dbTests.find(t => t.id === testId);
+      if (!test) return;
+
+      activeQuizData = JSON.parse(JSON.stringify(test)); // nusxa olish
+      quizCurrentQuestionIndex = 0;
+      quizFullscreenExitsCount = 0;
+      quizUserAnswers = new Array(activeQuizData.questions.length).fill(null);
+      
+      // Fullscreen rejimini yoqish talabi
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) docEl.requestFullscreen();
+      else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
 
       document.getElementById('mainAppView').classList.add('hidden');
       document.getElementById('quizWorkspace').classList.remove('hidden');
 
-      document.getElementById('quizBadge').innerText = test.id;
+      document.getElementById('quizIdentityBadge').innerText = activeQuizData.id;
+      document.getElementById('quizFullscreenWarningBadge').innerText = `Xavfsizlik: 0 / 3`;
+
+      quizTotalTimeSeconds = activeQuizData.time * 60;
+      quizTimeLeftSeconds = quizTotalTimeSeconds;
       
-      initCheatDetection();
-      startTimer();
-      renderQuestion();
+      executeQuizTimerInterval();
+      renderQuizQuestionCore();
+      buildQuizQuestionsPalette();
     }
 
-    function renderQuestion() {
-      const qData = quiz.activeData.questions[quiz.currentIndex];
-      document.getElementById('qProgress').innerText = `${quiz.currentIndex + 1} / ${quiz.activeData.questions.length}`;
-      document.getElementById('qWeightBadge').innerText = `Ball: ${qData.weight || 2}`;
-      document.getElementById('qText').innerText = qData.q;
+    // Fullscreen o'zgarishini kuzatish (Anti-Cheat Tizimi)
+    document.addEventListener('fullscreenchange', handleCheatScreenLockDetection);
+    document.addEventListener('webkitfullscreenchange', handleCheatScreenLockDetection);
 
-      const optsBox = document.getElementById('qOptions');
-      optsBox.innerHTML = qData.options.map((opt, idx) => {
-        const letter = String.fromCharCode(65 + idx);
-        const isSelected = quiz.userAnswers[quiz.currentIndex] === idx;
-        const activeCls = isSelected ? 'border-accentBlue bg-accentBlue/10 text-white' : 'border-premiumBorder hover:border-gray-500 text-gray-300';
-        return `
-          <button onclick="selectOption(${idx})" class="w-full text-left p-4 rounded-xl border text-sm font-medium transition-all flex items-center gap-3 ${activeCls}">
-            <span class="h-6 w-6 rounded-lg bg-premiumDark flex items-center justify-center font-mono font-bold text-accentCyan border border-premiumBorder">${letter}</span>
-            <div class="break-words max-w-full">${opt}</div>
-          </button>
-        `;
-      }).join('');
+    function handleCheatScreenLockDetection() {
+      // Agar quiz faol bo'lsa va to'liq ekrandan chiqsa
+      const isQuizActive = activeQuizData !== null && !document.getElementById('quizWorkspace').classList.contains('hidden');
+      if (isQuizActive) {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          quizFullscreenExitsCount++;
+          document.getElementById('quizFullscreenWarningBadge').innerText = `Xavfsizlik: ${quizFullscreenExitsCount} / 3`;
+          showToast(`OGOHLANTIRISH! To'liq ekran rejimidan chiqdingiz! (${quizFullscreenExitsCount}/3)`, 'error');
 
-      // Render Palette Navigation
-      const palette = document.getElementById('qPalette');
-      palette.innerHTML = quiz.activeData.questions.map((_, i) => {
-        let bg = 'bg-premiumDark border-premiumBorder';
-        if(quiz.userAnswers[i] !== null) bg = 'bg-accentBlue text-white border-accentBlue';
-        if(i === quiz.currentIndex) bg = 'bg-transparent border-accentCyan text-accentCyan soft-ring animate-pulse';
-        return `<button onclick="jumpToQuestion(${i})" class="w-8 h-8 rounded-lg border text-xs font-mono font-bold transition-all flex items-center justify-center ${bg}">${i+1}</button>`;
-      }).join('');
-
-      triggerMathRender();
-    }
-
-    function selectOption(idx) {
-      quiz.userAnswers[quiz.currentIndex] = idx;
-      renderQuestion();
-    }
-    function quizNext() {
-      if(quiz.currentIndex < quiz.activeData.questions.length - 1) { quiz.currentIndex++; renderQuestion(); }
-    }
-    function quizPrev() {
-      if(quiz.currentIndex > 0) { quiz.currentIndex--; renderQuestion(); }
-    }
-    function jumpToQuestion(i) { quiz.currentIndex = i; renderQuestion(); }
-
-    function startTimer() {
-      const display = document.getElementById('quizTimer');
-      const bar = document.getElementById('timerBar');
-      const total = quiz.timeLeft;
-
-      quiz.timer = setInterval(() => {
-        quiz.timeLeft--;
-        if(quiz.timeLeft <= 0) {
-          clearInterval(quiz.timer);
-          endQuiz(true);
+          if (quizFullscreenExitsCount >= 3) {
+            showToast('Qoidabuzarlik aniqlanganligi sababli test majburiy yakunlandi!', 'error');
+            terminateQuizAndSaveResults(true); // Majburiy topshirish
+          }
         }
-        let m = Math.floor(quiz.timeLeft / 60).toString().padStart(2, '0');
-        let s = (quiz.timeLeft % 60).toString().padStart(2, '0');
-        display.innerText = `${m}:${s}`;
-        bar.style.width = `${(quiz.timeLeft / total) * 100}%`;
+      }
+    }
+
+    // Taymerni boshqarish funksiyasi
+    function executeQuizTimerInterval() {
+      clearInterval(quizTimerInterval);
+      const clock = document.getElementById('quizDigitalTimerClock');
+      const bar = document.getElementById('quizTimerProgressBar');
+
+      quizTimerInterval = setInterval(() => {
+        quizTimeLeftSeconds--;
+        
+        let min = Math.floor(quizTimeLeftSeconds / 60);
+        let sec = quizTimeLeftSeconds % 60;
+        clock.innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+        let pct = (quizTimeLeftSeconds / quizTotalTimeSeconds) * 100;
+        bar.style.width = pct + '%';
+
+        if (quizTimeLeftSeconds <= 60) {
+          clock.classList.remove('text-accentBlue');
+          clock.classList.add('text-accentRose');
+        }
+
+        if (quizTimeLeftSeconds <= 0) {
+          clearInterval(quizTimerInterval);
+          showToast('Vaqtingiz o\'z nihoyasiga yetdi!', 'error');
+          terminateQuizAndSaveResults(false);
+        }
       }, 1000);
     }
 
-    // ANTI CHEAT DETECTOR
-    function initCheatDetection() {
-      window.addEventListener('blur', handleCheat);
-    }
-    function removeCheatDetection() {
-      window.removeEventListener('blur', handleCheat);
-    }
-    function handleCheat() {
-      quiz.cheats++;
-      if(quiz.cheats >= 3) {
-        showToast('Xavfsizlik qoidalarini ko\'p marta buzganyizgiz sabab test yakunlandi!', 'error');
-        endQuiz(true);
+    // Savolni ekranga chiqarish
+    function renderQuizQuestionCore() {
+      if (!activeQuizData) return;
+      const q = activeQuizData.questions[quizCurrentQuestionIndex];
+
+      document.getElementById('quizQuestionProgressLabel').innerText = `Savol: ${quizCurrentQuestionIndex + 1} / ${activeQuizData.questions.length}`;
+
+      // Rasmni tekshirish va chiqarish
+      const imgWrapper = document.getElementById('quizQuestionImageWrapper');
+      const imgNode = document.getElementById('quizQuestionImage');
+      if (q.image) {
+        imgNode.src = q.image;
+        imgWrapper.classList.remove('hidden');
       } else {
-        showToast(`Ogohlantirish! Test paytida ekrandan chiqish taqiqlanadi (${quiz.cheats}/3)`, 'error');
+        imgWrapper.classList.add('hidden');
       }
-    }
 
-    function endQuiz(auto = false) {
-      if(!auto && !confirm('Testni yakunlashni xohlaysizmi?')) return;
-      clearInterval(quiz.timer);
-      removeCheatDetection();
+      // Matnni avtoformatlash va chiqarish
+      document.getElementById('quizQuestionText').innerHTML = autoFormatFormulaSyntax(q.q);
 
-      // Hisoblash logic (Ballashtirilgan)
-      let correctCount = 0;
-      let totalEarnedScore = 0;
+      // Variantlarni chizish
+      const optStack = document.getElementById('quizOptionsStack');
+      optStack.innerHTML = '';
 
-      quiz.activeData.questions.forEach((q, i) => {
-        if(quiz.userAnswers[i] === q.correct) {
-          correctCount++;
-          totalEarnedScore += (q.weight || 2);
-        }
+      q.options.forEach((opt, idx) => {
+        const isSelected = quizUserAnswers[quizCurrentQuestionIndex] === idx;
+        const borderCls = isSelected ? 'border-accentBlue ring-2 ring-accentBlue/20 bg-accentBlue/5' : 'border-gray-200 dark:border-premiumBorder bg-white/50 dark:bg-premiumDark/40';
+        const badgeCls = isSelected ? 'bg-accentBlue text-white' : 'bg-gray-500/10 text-gray-400';
+        const letter = String.fromCharCode(65 + idx); // A, B, C, D
+
+        optStack.innerHTML += `
+          <button onclick="selectQuizOption(${idx})" class="w-full text-left option-btn p-4 rounded-xl border flex items-center gap-4 ${borderCls}">
+            <span class="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm ${badgeCls}">${letter}</span>
+            <span class="text-sm font-medium tracking-tight">${autoFormatFormulaSyntax(opt)}</span>
+          </button>
+        `;
       });
 
-      const resultObject = {
-        id: 'res_' + Date.now(),
-        userId: state.currentUser.id,
-        userName: state.currentUser.name,
-        testId: quiz.activeData.id,
-        testTitle: quiz.activeData.title,
-        totalQuestions: quiz.activeData.questions.length,
-        correct: correctCount,
-        score: totalEarnedScore,
-        userAnswersArray: [...quiz.userAnswers],
-        date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().slice(0,5)
-      };
-
-      state.results.push(resultObject);
-      syncStorage();
-
-      document.getElementById('quizWorkspace').classList.add('hidden');
-      document.getElementById('mainAppView').classList.remove('hidden');
-
-      renderHome();
-      renderResults();
-      switchTab('resultsTab');
-      showToast(`Test yakunlandi. Ballingiz: ${totalEarnedScore.toFixed(1)}`);
-      viewReview(resultObject.id);
-    }
-
-    // REVIEW CHOSEN TEST (Xatolar ustida mukammal tahlil)
-    function viewReview(resId) {
-      const res = state.results.find(r => r.id === resId);
-      const test = state.tests.find(t => t.id === res.testId);
-      if(!res || !test) return;
-
-      const modal = document.getElementById('reviewModal');
-      const content = document.getElementById('reviewContent');
-      modal.classList.remove('hidden');
-
-      content.innerHTML = `
-        <div class="panel rounded-2xl p-6 bg-premiumDark flex flex-col md:flex-row justify-between items-center gap-4 border border-premiumBorder">
-          <div>
-            <h4 class="text-xl font-black text-white">${res.testTitle}</h4>
-            <p class="text-xs text-gray-400 mt-1">O'quvchi ID: ${res.userId} | Sana: ${res.date}</p>
-          </div>
-          <div class="text-center bg-accentBlue/10 p-4 rounded-xl border border-accentBlue/20 min-w-[140px]">
-            <div class="text-[10px] text-gray-400 uppercase font-bold">To'plangan Ball</div>
-            <div class="text-2xl font-black text-accentEmerald mt-1">${res.score.toFixed(1)}</div>
-          </div>
-        </div>
-        <div class="space-y-4">
-      ` + test.questions.map((q, qIdx) => {
-        const uAns = res.userAnswersArray[qIdx];
-        const isCorrect = uAns === q.correct;
-        const cardBorder = isCorrect ? 'border-emerald-500/30 bg-emerald-500/5' : (uAns === null ? 'border-amber-500/30 bg-amber-500/5' : 'border-red-500/30 bg-red-500/5');
-        
-        return `
-          <div class="panel rounded-xl p-5 border ${cardBorder} space-y-3">
-            <div class="flex justify-between items-center text-xs">
-              <span class="font-bold text-gray-400">SAVOL #${qIdx+1}</span>
-              <span class="${isCorrect ? 'text-accentEmerald':'text-accentRose'} font-bold">${isCorrect ? 'To\'g\'ri' : (uAns === null ? 'Belgilanmagan':'Xato')}</span>
-            </div>
-            <p class="text-md font-serif text-gray-200 select-none">${q.q}</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
-              ${q.options.map((opt, oIdx) => {
-                let optCls = 'border-premiumBorder text-gray-400 bg-premiumDark/30';
-                if(oIdx === q.correct) optCls = 'border-emerald-500 text-emerald-400 bg-emerald-500/10 font-bold';
-                else if(oIdx === uAns) optCls = 'border-red-500 text-red-400 bg-red-500/10 font-bold';
-                return `<div class="p-3 border text-xs rounded-lg flex items-center gap-2 ${optCls}"><span>${String.fromCharCode(65+oIdx)})</span> <div>${opt}</div></div>`;
-              }).join('')}
-            </div>
-          </div>
-        `;
-      }).join('') + `</div>`;
-
-      triggerMathRender();
-    }
-    function closeReview() { document.getElementById('reviewModal').classList.add('hidden'); }
-
-    // SCRATCHPAD CANVAS LOGIC (Qoralama)
-    let canvas, ctx, isDrawing = false;
-    function openCanvas() {
-      document.getElementById('canvasModal').classList.remove('hidden');
-      canvas = document.getElementById('scratchCanvas');
-      ctx = canvas.getContext('2d');
-      resizeCanvas();
-      setCanvasStyle();
-
-      canvas.addEventListener('mousedown', startDraw);
-      canvas.addEventListener('mousemove', drawing);
-      canvas.addEventListener('mouseup', stopDraw);
-      canvas.addEventListener('touchstart', startDraw);
-      canvas.addEventListener('touchmove', drawing);
-      canvas.addEventListener('touchend', stopDraw);
-    }
-    function resizeCanvas() {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight - 40;
-    }
-    function setCanvasStyle() {
-      if(!ctx) return;
-      const mode = document.getElementById('canvasMode').value;
-      const width = document.getElementById('canvasBrushWidth').value;
-      ctx.lineWidth = parseInt(width);
-      ctx.lineCap = 'round';
-      if(mode === 'erase') {
-        ctx.strokeStyle = '#0B0F19'; // Fon rangi bilan o'chirish
+      // Tugmalar holati
+      document.getElementById('quizPrevBtn').disabled = quizCurrentQuestionIndex === 0;
+      if (quizCurrentQuestionIndex === activeQuizData.questions.length - 1) {
+        document.getElementById('quizNextBtn').innerHTML = `Yakunlash <i class="fa-solid fa-flag-checkered ml-2"></i>`;
+        document.getElementById('quizNextBtn').className = "px-6 py-3.5 bg-accentEmerald text-white rounded-xl text-sm font-bold shadow-md hover:bg-emerald-600 transition-all";
       } else {
-        ctx.strokeStyle = '#06B6D4'; // Qalam rangi Cyan
+        document.getElementById('quizNextBtn').innerHTML = `Keyingi <i class="fa-solid fa-chevron-right ml-2"></i>`;
+        document.getElementById('quizNextBtn').className = "px-6 py-3.5 bg-accentBlue text-white rounded-xl text-sm font-bold shadow-glowBlue hover:bg-blue-600 transition-all";
+      }
+
+      updateQuizQuestionsPaletteHighlight();
+      enforceMathJaxTypeset();
+    }
+
+    function selectQuizOption(idx) {
+      quizUserAnswers[quizCurrentQuestionIndex] = idx;
+      renderQuizQuestionCore();
+    }
+
+    function quizNavigatePrevious() {
+      if (quizCurrentQuestionIndex > 0) {
+        quizCurrentQuestionIndex--;
+        renderQuizQuestionCore();
       }
     }
-    function startDraw(e) {
+
+    function quizNavigateNext() {
+      if (quizCurrentQuestionIndex < activeQuizData.questions.length - 1) {
+        quizCurrentQuestionIndex++;
+        renderQuizQuestionCore();
+      } else {
+        manuallyAttemptQuizTermination();
+      }
+    }
+
+    function jumpToSpecificQuizQuestion(idx) {
+      quizCurrentQuestionIndex = idx;
+      renderQuizQuestionCore();
+    }
+
+    function buildQuizQuestionsPalette() {
+      const pal = document.getElementById('quizQuestionsPalette');
+      pal.innerHTML = '';
+      activeQuizData.questions.forEach((_, idx) => {
+        pal.innerHTML += `<button onclick="jumpToSpecificQuizQuestion(${idx})" id="palette-q-${idx}" class="w-10 h-10 rounded-xl font-bold font-mono text-xs transition-all border border-gray-200 dark:border-premiumBorder text-gray-400 glass">${idx + 1}</button>`;
+      });
+    }
+
+    function updateQuizQuestionsPaletteHighlight() {
+      if (!activeQuizData) return;
+      activeQuizData.questions.forEach((_, idx) => {
+        const btn = document.getElementById(`palette-q-${idx}`);
+        if (!btn) return;
+        
+        const isCurrent = quizCurrentQuestionIndex === idx;
+        const isAnswered = quizUserAnswers[idx] !== null;
+
+        if (isCurrent) {
+          btn.className = "w-10 h-10 rounded-xl font-bold font-mono text-xs transition-all border-2 border-accentBlue bg-accentBlue/10 text-accentBlue shadow-glowBlue";
+        } else if (isAnswered) {
+          btn.className = "w-10 h-10 rounded-xl font-bold font-mono text-xs transition-all border border-accentEmerald bg-accentEmerald/10 text-accentEmerald";
+        } else {
+          btn.className = "w-10 h-10 rounded-xl font-bold font-mono text-xs transition-all border border-gray-200 dark:border-premiumBorder text-gray-400 glass";
+        }
+      });
+    }
+
+    function manuallyAttemptQuizTermination() {
+      if (confirm('Imtihonni yakunlashni tasdiqlaysizmi?')) {
+        terminateQuizAndSaveResults(false);
+      }
+    }
+
+    // Test yakunlanganda natijani saqlash
+    function terminateQuizAndSaveResults(isForceViolated = false) {
+      clearInterval(quizTimerInterval);
+      
+      let correctCount = 0;
+      if (!isForceViolated) {
+        activeQuizData.questions.forEach((q, idx) => {
+          if (quizUserAnswers[idx] === q.correct) correctCount++;
+        });
+      }
+
+      let totalQ = activeQuizData.questions.length;
+      let finalPercent = Math.round((correctCount / totalQ) * 100) || 0;
+      if (isForceViolated) { finalPercent = 0; correctCount = 0; }
+
+      const now = new Date();
+      const dateString = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+      const resObj = {
+        id: 'res_' + Math.random().toString(36).substr(2, 9),
+        testId: activeQuizData.id,
+        testTitle: activeQuizData.title,
+        studentId: appState.currentUser.id,
+        studentName: appState.currentUser.name,
+        score: correctCount,
+        totalQ: totalQ,
+        percent: finalPercent,
+        date: dateString
+      };
+
+      dbResults.push(resObj);
+      commitDataToStorage();
+
+      // Fullscreendan to'liq chiqib ketish
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+
+      activeQuizData = null;
+      document.getElementById('quizWorkspace').classList.add('hidden');
+      switchTabPanel('resultsTab');
+      
+      if (isForceViolated) {
+        alert('Cheat-Tizimi: Qoidabuzarliklaringiz soni 3 taga yetganligi sababli testingiz bekor qilindi (0%).');
+      } else {
+        alert(`Imtihon yakunlandi! Sizning natijangiz: ${correctCount} / ${totalQ} (${finalPercent}%)`);
+      }
+    }
+
+    // ================= CANVASES LOGIKA (QORALAMA) =================
+    let isDrawing = false;
+    let canvasCore = document.getElementById('scratchpadCoreCanvas');
+    let ctxCore = canvasCore.getContext('2d');
+
+    function toggleScratchCanvasModal() {
+      const modal = document.getElementById('scratchCanvasModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        setTimeout(() => {
+          canvasCore.width = canvasCore.parentElement.clientWidth;
+          canvasCore.height = canvasCore.parentElement.clientHeight - 20;
+          updateCanvasPenStyle();
+        }, 50);
+      }
+    }
+
+    function updateCanvasPenStyle() {
+      const mode = document.getElementById('canvasToolSelector').value;
+      if (mode === 'draw') {
+        ctxCore.strokeStyle = document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a';
+        ctxCore.lineWidth = 2;
+      } else {
+        ctxCore.strokeStyle = document.documentElement.classList.contains('dark') ? '#0C111D' : '#ffffff';
+        ctxCore.lineWidth = 24;
+      }
+      ctxCore.lineCap = 'round';
+      ctxCore.lineJoin = 'round';
+    }
+
+    // Canvas sichqoncha va sensor hodisalari
+    canvasCore.addEventListener('mousedown', (e) => { isDrawing = true; ctxCore.beginPath(); ctxCore.moveTo(e.offsetX, e.offsetY); });
+    canvasCore.addEventListener('mousemove', (e) => { if(isDrawing) { ctxCore.lineTo(e.offsetX, e.offsetY); ctxCore.stroke(); } });
+    canvasCore.addEventListener('mouseup', () => isDrawing = false);
+    canvasCore.addEventListener('mouseleave', () => isDrawing = false);
+
+    canvasCore.addEventListener('touchstart', (e) => {
       isDrawing = true;
-      ctx.beginPath();
-      const x = e.clientX || e.touches[0].clientX;
-      const y = e.clientY || e.touches[0].clientY;
-      const rect = canvas.getBoundingClientRect();
-      ctx.moveTo(x - rect.left, y - rect.top);
-    }
-    function drawing(e) {
-      if(!isDrawing) return;
+      const r = canvasCore.getBoundingClientRect();
+      ctxCore.beginPath();
+      ctxCore.moveTo(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
       e.preventDefault();
-      const x = e.clientX || e.touches[0].clientX;
-      const y = e.clientY || e.touches[0].clientY;
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineTo(x - rect.left, y - rect.top);
-      ctx.stroke();
-    }
-    function stopDraw() { isDrawing = false; }
-    function clearDraw() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-    function closeCanvas() { document.getElementById('canvasModal').classList.add('hidden'); }
+    });
+    canvasCore.addEventListener('touchmove', (e) => {
+      if(!isDrawing) return;
+      const r = canvasCore.getBoundingClientRect();
+      ctxCore.lineTo(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
+      ctxCore.stroke();
+      e.preventDefault();
+    });
+    canvasCore.addEventListener('touchend', () => isDrawing = false);
 
-    // DARK / LIGHT THEME CONTROL
-    function initTheme() {
-      const stored = localStorage.getItem(THEME_KEY) || 'dark';
-      document.documentElement.classList.toggle('dark', stored === 'dark');
-      document.getElementById('themeIcon').className = stored === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun text-amber-400';
-    }
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.contains('dark');
-      localStorage.setItem(THEME_KEY, isDark ? 'light' : 'dark');
-      initTheme();
+    function clearScratchCanvas() {
+      ctxCore.clearRect(0, 0, canvasCore.width, canvasCore.height);
+      updateCanvasPenStyle();
     }
 
-    // ON APPLICATION LOAD
-    window.onload = () => {
-      loadData();
-      initTheme();
-    };
+    // ================= BOSHQUROV PANEL (ADMIN) FUNKSIYALARI =================
+    let builderQuestionsArray = [];
+
+    function switchAdminSection(subViewId) {
+      document.querySelectorAll('.admin-sub-view').forEach(el => el.classList.add('hidden'));
+      document.getElementById(subViewId).classList.remove('hidden');
+
+      document.querySelectorAll('[id^="subBtn-"]').forEach(btn => btn.className = "px-5 py-2.5 text-xs font-black uppercase tracking-wider text-gray-400 rounded-xl transition-all");
+      document.getElementById('subBtn-' + subViewId).className = "px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-xl admin-tab-active transition-all";
+    }
+
+    function rebuildAdminControlPanels() {
+      // Kategoriyalar tanlagichini to'ldirish
+      const selectTestCat = document.getElementById('newTestCategory');
+      const statsTestSel = document.getElementById('adminStatsTestSelector');
+      
+      selectTestCat.innerHTML = '';
+      statsTestSel.innerHTML = '<option value="">-- Testni tanlang --</option>';
+
+      dbCategories.forEach(c => {
+        selectTestCat.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+      });
+
+      dbTests.forEach(t => {
+        statsTestSel.innerHTML += `<option value="${t.id}">[${t.id}] ${t.title}</option>`;
+      });
+
+      renderAdminTestsListTable();
+      renderAdminCategoriesListTable();
+      builderQuestionsArray = [];
+      document.getElementById('builderQuestionsStack').innerHTML = '';
+      addNewQuestionRowToBuilder(); // dastlabki bo'sh qator
+    }
+
+    // Rasm faylini yuklab uni Base64 matniga aylantirish xizmati
+    function processImageUploadToBase64(inputEl, targetImgId, index) {
+      const file = inputEl.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          builderQuestionsArray[index].image = e.target.result;
+          const previewImg = document.getElementById(targetImgId);
+          previewImg.src = e.target.result;
+          previewImg.classList.remove('hidden');
+          showToast('Rasm muvaffaqiyatli yuklandi!');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Real vaqt rejimida formula kiritilishini vizual tekshirish
+    function livePreviewMathFormula(textVal, previewContainerId) {
+      const container = document.getElementById(previewContainerId);
+      container.innerHTML = autoFormatFormulaSyntax(textVal);
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([container]).catch(err => console.log(err));
+      }
+    }
+
+    // Savol qo'shish qatorini yaratish
+    function addNewQuestionRowToBuilder() {
+      const idx = builderQuestionsArray.length;
+      builderQuestionsArray.push({ q: '', options: ['', '', '', ''], correct: 0, image: null });
+
+      const stack = document.getElementById('builderQuestionsStack');
+      const qBlock = document.createElement('div');
+      qBlock.className = "p-4 border border-gray-200 dark:border-premiumBorder rounded-xl bg-white/50 dark:bg-premiumDark/60 space-y-3 relative";
+      qBlock.id = `builder-block-${idx}`;
+
+      qBlock.innerHTML = `
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-black text-accentBlue uppercase tracking-wider">Savol #${idx + 1}</span>
+          <button onclick="removeQuestionRowFromBuilder(${idx})" class="text-[10px] bg-accentRose/10 text-accentRose px-2 py-1 rounded border border-accentRose/20">O'chirish</button>
+        </div>
+        
+        <div>
+          <label class="block text-[11px] font-bold uppercase text-gray-400 mb-1">Savol Sharti (Matn yoki $Formula$)</label>
+          <textarea oninput="builderQuestionsArray[${idx}].q = this.value; livePreviewMathFormula(this.value, 'live-prev-q-${idx}')" placeholder="Masalan: To'g'ri to'rtburchakning yuzi $S = a \\cdot b$ formulasidan aniqlanadi. Agar 2^2 bo'lsa..." rows="2"
+                    class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-lg p-2.5 text-xs outline-none focus:border-accentBlue font-medium"></textarea>
+          <div class="mt-1 text-xs p-2 bg-gray-500/5 rounded border border-dashed border-gray-600/20 text-accentCyan font-serif min-h-[24px]" id="live-prev-q-${idx}">Formula Preview...</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-gray-500/5 rounded-lg border border-gray-600/10">
+          <div>
+            <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Rasm havolasi (URL)</label>
+            <input type="text" oninput="builderQuestionsArray[${idx}].image = this.value; document.getElementById('live-img-${idx}').src=this.value; document.getElementById('live-img-${idx}').classList.remove('hidden')" placeholder="https://site.uz/image.png"
+                   class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-lg p-2 text-xs outline-none focus:border-accentBlue">
+          </div>
+          <div>
+            <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Yoki Kompyuterdan rasm yuklash</label>
+            <input type="file" accept="image/*" onchange="processImageUploadToBase64(this, 'live-img-${idx}', ${idx})"
+                   class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-accentBlue/10 file:text-accentBlue hover:file:bg-accentBlue/20">
+          </div>
+          <div class="col-span-full flex justify-center">
+            <img id="live-img-${idx}" src="" alt="Yuklangan rasm" class="hidden max-h-32 object-contain rounded border border-gray-600/20 mt-1">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-0.5">Variant A</label>
+            <input type="text" oninput="builderQuestionsArray[${idx}].options[0] = this.value" placeholder="Variant A" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-lg p-2 text-xs outline-none focus:border-accentBlue">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-0.5">Variant B</label>
+            <input type="text" oninput="builderQuestionsArray[${idx}].options[1] = this.value" placeholder="Variant B" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-lg p-2 text-xs outline-none focus:border-accentBlue">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-0.5">Variant C</label>
+            <input type="text" oninput="builderQuestionsArray[${idx}].options[2] = this.value" placeholder="Variant C" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-lg p-2 text-xs outline-none focus:border-accentBlue">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-0.5">Variant D</label>
+            <input type="text" oninput="builderQuestionsArray[${idx}].options[3] = this.value" placeholder="Variant D" class="w-full bg-gray-500/5 border border-gray-200 dark:border-premiumBorder rounded-lg p-2 text-xs outline-none focus:border-accentBlue">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-black uppercase text-accentEmerald mb-1">To'g'ri javob kaliti:</label>
+          <select onchange="builderQuestionsArray[${idx}].correct = parseInt(this.value)" class="bg-gray-500/5 border border-accentEmerald/30 text-accentEmerald rounded-lg p-2 text-xs font-bold outline-none">
+            <option value="0">A variant to'g'ri</option>
+            <option value="1">B variant to'g'ri</option>
+            <option value="2">C variant to'g'ri</option>
+            <option value="3">D variant to'g'ri</option>
+          </select>
+        </div>
+      `;
+      stack.appendChild(qBlock);
+    }
+
+    function removeQuestionRowFromBuilder(idx) {
+      document.getElementById(`builder-block-${idx}`).remove();
+      builderQuestionsArray[idx] = null;
+    }
+
+    // Yangi yaratilgan test paketini saqlash
+    function saveCompiledTestPackage() {
+      const title = document.getElementById('newTestTitle').value.trim();
+      const catId = document.getElementById('newTestCategory').value;
+      const time = parseInt(document.getElementById('newTestTime').value);
+      const code = document.getElementById('newTestCode').value.trim();
+
+      // Tozalash va null bo'lgan qatorlarni olib tashlash
+      let validQuestions = builderQuestionsArray.filter(q => q !== null && q.q.trim() !== '');
+
+      if (!title || !time || !code || validQuestions.length === 0) {
+        showToast('Iltimos imtihon ma\'lumotlarini va savollarni to\'liq kiriting!', 'error');
+        return;
+      }
+
+      const newPkg = {
+        id: code,
+        title: title,
+        categoryId: catId,
+        qCount: validQuestions.length,
+        time: time,
+        questions: validQuestions
+      };
+
+      dbTests.push(newPkg);
+      commitDataToStorage();
+      showToast('Yangi imtihon paketi muvaffaqiyatli tizimga qo\'shildi!');
+      rebuildAdminControlPanels();
+    }
+
+    function renderAdminTestsListTable() {
+      const body = document.getElementById('adminTestsListTableBody');
+      body.innerHTML = '';
+      dbTests.forEach(t => {
+        const cat = dbCategories.find(c => c.id === t.categoryId) || { name: 'Boshqa' };
+        body.innerHTML += `
+          <tr class="hover:bg-gray-500/5 text-xs font-medium">
+            <td class="p-4 font-mono text-accentCyan font-bold">${t.id}</td>
+            <td class="p-4 font-bold text-sm">${t.title}</td>
+            <td class="p-4 text-gray-400">${cat.name}</td>
+            <td class="p-4 font-bold">${t.questions.length} ta</td>
+            <td class="p-4 text-right"><button onclick="deleteTestPackageFromDb('${t.id}')" class="text-accentRose font-bold hover:underline"><i class="fa-solid fa-trash-can"></i> O'chirish</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function deleteTestPackageFromDb(id) {
+      if (confirm('Ushbu testni butunlay o\'chirmoqchimisiz?')) {
+        dbTests = dbTests.filter(t => t.id !== id);
+        commitDataToStorage();
+        rebuildAdminControlPanels();
+        showToast('Test o\'chirildi');
+      }
+    }
+
+    // Kategoriyalar boshqaruvi
+    function saveCreatedCategory() {
+      const name = document.getElementById('newCatName').value.trim();
+      const icon = document.getElementById('newCatIcon').value;
+      if (!name) return;
+
+      const newId = 'cat_' + Math.random().toString(36).substr(2, 5);
+      dbCategories.push({ id: newId, name: name, icon: icon });
+      commitDataToStorage();
+      showToast('Yangi fan yo\'nalishi qo\'shildi');
+      document.getElementById('newCatName').value = '';
+      rebuildAdminControlPanels();
+    }
+
+    function renderAdminCategoriesListTable() {
+      const body = document.getElementById('adminCatsListTableBody');
+      body.innerHTML = '';
+      dbCategories.forEach(c => {
+        body.innerHTML += `
+          <tr class="hover:bg-gray-500/5 text-xs font-medium">
+            <td class="p-4"><i class="fa-solid ${c.icon} mr-2 text-accentBlue"></i> ${c.name}</td>
+            <td class="p-4 text-right"><button onclick="deleteCategoryFromDb('${c.id}')" class="text-accentRose font-bold"><i class="fa-solid fa-square-minus"></i></button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function deleteCategoryFromDb(id) {
+      if(confirm('Kategoriyani o\'chirishni tasdiqlaysizmi?')) {
+        dbCategories = dbCategories.filter(c => c.id !== id);
+        commitDataToStorage();
+        rebuildAdminControlPanels();
+      }
+    }
+
+    // ================= KENGAYTIRILGAN INDIVIDUAL STATISTIKA LOGIKASI =================
+    let specificTestAttemptsCached = [];
+
+    function renderSpecificTestStatistics(testId) {
+      const cardsContainer = document.getElementById('statsDynamicMetricCards');
+      const tableBody = document.getElementById('adminStatsStudentsTableBody');
+      
+      if (!testId) {
+        cardsContainer.innerHTML = '';
+        tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">Hech qanday ma'lumot mavjud emas. Yuqoridan test tanlang.</td></tr>`;
+        return;
+      }
+
+      // Ushbu testga tegishli barcha urinishlarni filtrlash
+      specificTestAttemptsCached = dbResults.filter(r => r.testId === testId);
+
+      if (specificTestAttemptsCached.length === 0) {
+        cardsContainer.innerHTML = '';
+        tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-accentRose text-xs font-bold">Ushbu test paketi bo'yicha hali hech kim imtihon topshirmagan.</td></tr>`;
+        return;
+      }
+
+      // Analitika hisoblash
+      let totalAttempts = specificTestAttemptsCached.length;
+      let highestPercent = Math.max(...specificTestAttemptsCached.map(r => r.percent));
+      let averagePercent = Math.round(specificTestAttemptsCached.reduce((acc, curr) => acc + curr.percent, 0) / totalAttempts);
+      let passedCount = specificTestAttemptsCached.filter(r => r.percent >= 60).length;
+      let passingRate = Math.round((passedCount / totalAttempts) * 100);
+
+      // Metrik kartalarni chizish
+      cardsContainer.innerHTML = `
+        <div class="panel rounded-xl p-4 bg-white/50 dark:bg-premiumCard text-center border-l-4 border-l-accentBlue">
+          <span class="text-[10px] font-black uppercase tracking-wider text-gray-400 block">Jami Urinishlar</span>
+          <span class="text-3xl font-black block mt-2 text-accentBlue">${totalAttempts} marta</span>
+        </div>
+        <div class="panel rounded-xl p-4 bg-white/50 dark:bg-premiumCard text-center border-l-4 border-l-accentAmber">
+          <span class="text-[10px] font-black uppercase tracking-wider text-gray-400 block">Eng Yuqori Natija</span>
+          <span class="text-3xl font-black block mt-2 text-accentAmber">${highestPercent}%</span>
+        </div>
+        <div class="panel rounded-xl p-4 bg-white/50 dark:bg-premiumCard text-center border-l-4 border-l-accentCyan">
+          <span class="text-[10px] font-black uppercase tracking-wider text-gray-400 block">O'rtacha O'zlashtirish</span>
+          <span class="text-3xl font-black block mt-2 text-accentCyan">${averagePercent}%</span>
+        </div>
+        <div class="panel rounded-xl p-4 bg-white/50 dark:bg-premiumCard text-center border-l-4 border-l-accentEmerald">
+          <span class="text-[10px] font-black uppercase tracking-wider text-gray-400 block">O'tish Ko'rsatkichi</span>
+          <span class="text-3xl font-black block mt-2 text-accentEmerald">${passingRate}%</span>
+        </div>
+      `;
+
+      renderStatsStudentTableRows(specificTestAttemptsCached);
+    }
+
+    function renderStatsStudentTableRows(dataList) {
+      const tableBody = document.getElementById('adminStatsStudentsTableBody');
+      tableBody.innerHTML = '';
+
+      dataList.forEach(r => {
+        const badgeCls = r.percent >= 60 ? 'text-accentEmerald bg-accentEmerald/10' : 'text-accentRose bg-accentRose/10';
+        tableBody.innerHTML += `
+          <tr class="hover:bg-gray-500/5 text-xs font-medium">
+            <td class="p-4 font-mono text-gray-400">${r.date}</td>
+            <td class="p-4"><div class="font-bold text-sm">${r.studentName}</div><div class="text-[10px] font-mono text-gray-400">ID: ${r.studentId}</div></td>
+            <td class="p-4 font-mono text-base">${r.score} / ${r.totalQ}</td>
+            <td class="p-4"><span class="px-2.5 py-1 rounded-lg font-mono font-bold text-sm ${badgeCls}">${r.percent}%</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    // Talabalar ismlari bo'yicha qidiruv filtri
+    function filterStatsStudentList() {
+      const kw = document.getElementById('statsStudentSearch').value.toLowerCase().trim();
+      let filtered = specificTestAttemptsCached.filter(r => r.studentName.toLowerCase().includes(kw) || r.studentId.includes(kw));
+      renderStatsStudentTableRows(filtered);
+    }
   </script>
 </body>
 </html>

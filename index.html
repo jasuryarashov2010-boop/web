@@ -603,13 +603,22 @@
     /* =========================================
        1. GLOBAL STATE & CONSTANTS
        ========================================= */
+    /* =========================================
+       1. GLOBAL STATE & CONSTANTS
+       ========================================= */
     const THEME_KEY = 'alotalim_elite_theme';
     const SECURE_ADMIN_PASS = '0000'; // Trapdoor exactly as requested
     
-    // MOCK TELEGRAM BOT ARRAY (Only these or "admin" can enter)
-    const registeredBotUsers = ['12345', '998901234567', '777', '998991112233', '1001'];
+    // 🔴 DIQQAT: Bot ishlayotgan serverning IP manzili yoki domenini yozing. 
+    // Masalan: 'https://mening-botim.onrender.com' yoki 'http://127.0.0.1:8080'
+    const BOT_API_BASE = 'http://127.0.0.1:8080'; 
+    const BOT_API_ENDPOINT = `${BOT_API_BASE}/api/login`;
+    const BOT_TELEGRAM_URL = 'https://t.me/alo_math_bot';
 
-    let appState = JSON.parse(localStorage.getItem('alotalim_elite_state')) || { 
+    // Bu qatorni umuman olib tashlang (endi eskilik qiladi va bunga ehtiyoj yo'q)
+    // const registeredBotUsers = ['12345', ...];
+    // MOCK TELEGRAM BOT ARRAY (Only these or "admin" can enter)
+    let appState = JSON.parse(localStorage.getItem('alotalim_elite_state')) || {
       currentUser: null,
       userXP: 0,
       userLevel: 1,
@@ -740,39 +749,59 @@
       else wrap.classList.add('hidden');
     }
 
-    function loginSystem() {
-      const name = document.getElementById('authFullname').value.trim();
-      const id = document.getElementById('authStudentID').value.trim();
-      
-      if (!name || name.split(' ').length < 2) return showToast('Iltimos, Ism va Familiyangizni to\'liq kiriting!', 'error');
-      if (!id) return showToast('Tizim ID ni kiriting!', 'error');
+   async function loginSystem() {
+  const name = document.getElementById('authFullname').value.trim();
+  const id = document.getElementById('authStudentID').value.trim();
 
-      // Admin Trapdoor Logic
-      if (id.toLowerCase() === 'admin') {
-        const pass = document.getElementById('authAdminPassword').value;
-        if (pass !== SECURE_ADMIN_PASS) return showToast('Admin maxfiy kodi xato!', 'error');
-        
-        appState.currentUser = { name, id, role: 'admin' };
-        saveToStorage();
-        initAppView();
-        showToast('Administrator tizimga kirdi!', 'success');
-        return;
-      }
+  if (!name || name.split(' ').length < 2) return showToast("Iltimos, Ism va Familiyangizni to'liq kiriting!", 'error');
+  if (!id) return showToast('Tizim ID ni kiriting!', 'error');
 
-      // Telegram Bot Verification Simulation
-      if (!registeredBotUsers.includes(id)) {
-        return showToast("Xatolik: Ushbu Tizim ID ro'yxatdan o'tmagan! Iltimos, Telegram botimizdan o'ting.", 'error');
-      }
+  // Admin trapdoor o'z joyida qoladi
+  if (id.toLowerCase() === 'admin') {
+    const pass = document.getElementById('authAdminPassword').value;
+    if (pass !== SECURE_ADMIN_PASS) return showToast('Admin maxfiy kodi xato!', 'error');
 
-      // Regular User Login
-      appState.currentUser = { name, id, role: 'user' };
-      // Init gamification defaults if undefined
-      if(appState.userXP === undefined) appState.userXP = 0;
-      if(appState.userStreak === undefined) appState.userStreak = 0;
-      saveToStorage();
-      initAppView();
-      showToast("Tizimga muvaffaqiyatli kirdingiz!", 'success');
-    }
+    appState.currentUser = { name, id, role: 'admin' };
+    saveToStorage();
+    initAppView();
+    showToast('Administrator tizimga kirdi!', 'success');
+    return;
+  }
+
+  // BOT API BILAN BOG'LANISH (QAT'IY TEKSHIRUV)
+  let apiResult = null;
+  try {
+    const response = await fetch(BOT_API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: id })
+    });
+
+    apiResult = await response.json();
+  } catch (error) {
+    return showToast("Bot serveri bilan ulanib bo'lmadi! Tarmoqni tekshiring.", 'error');
+  }
+
+  // Agar bot javob bermasa yoki ruxsat bermasa, saytga kiritmaymiz
+  if (!apiResult || !apiResult.success) {
+    const errorMsg = apiResult?.error || "Ushbu Tizim ID ro'yxatdan o'tmagan! Botimizdan o'ting.";
+    return showToast(errorMsg, 'error');
+  }
+
+  // Baza orqali tasdiqlandi, tizimga ruxsat beramiz
+  appState.currentUser = {
+    name: apiResult.name || name, // Ismni ham bazadan tortib olamiz
+    id,
+    role: apiResult.role || 'user'
+  };
+
+  if(appState.userXP === undefined) appState.userXP = 0;
+  if(appState.userStreak === undefined) appState.userStreak = 0;
+  
+  saveToStorage();
+  initAppView();
+  showToast("Saytga muvaffaqiyatli kirdingiz!", 'success');
+}
 
     function logoutSystem() {
       if (confirm('Tizimdan chiqishni xohlaysizmi?')) {
